@@ -28,11 +28,9 @@
     html { font-size: 16px; -webkit-text-size-adjust: 100%; }
     body { font-family: 'Inter', sans-serif; background: var(--slate-100); color: var(--slate-800); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-    /* ===== ANIMAÇÕES GLOBAIS ===== */
+    /* ===== ANIMAÇÕES ===== */
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes pulseSoft { 0%, 100% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.4); } 50% { box-shadow: 0 0 0 8px rgba(39, 174, 96, 0); } }
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
     @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
     @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 70% { transform: scale(0.95); } 100% { transform: scale(1); opacity: 1; } }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -41,6 +39,9 @@
     @keyframes successFlash { 0% { background: var(--verde-escuro); transform: scale(1); } 30% { background: #2ecc71; transform: scale(1.1); box-shadow: 0 0 0 8px rgba(46, 204, 113, 0.3); } 100% { background: var(--verde-escuro); transform: scale(1); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); } }
     @keyframes errorFlash { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
     @keyframes badgeSwap { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.7); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes pulseZerado { 0%, 100% { transform: scale(1); box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4); } 50% { transform: scale(1.05); box-shadow: 0 4px 16px rgba(231, 76, 60, 0.6); } }
+    @keyframes cardSemEstoque { 0%, 100% { box-shadow: 0 2px 8px rgba(231, 76, 60, 0.15); } 50% { box-shadow: 0 4px 20px rgba(231, 76, 60, 0.35); } }
+    @keyframes pulseRepor { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 
     /* LOGIN */
     .login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, var(--verde-escuro) 0%, var(--verde) 100%); padding: 20px; }
@@ -79,10 +80,9 @@
     .page-admin { display: none; animation: fadeInUp 0.3s ease; }
     .page-admin.active { display: block; }
 
-    /* CARDS */
+    /* CARDS DASHBOARD */
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
     .stat-card { background: var(--branco); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--sombra); border-left: 4px solid var(--verde); transition: var(--transition); cursor: pointer; position: relative; overflow: hidden; }
-    .stat-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 60%, rgba(39, 174, 96, 0.06)); pointer-events: none; }
     .stat-card:hover { transform: translateY(-3px); box-shadow: var(--sombra-lg); }
     .stat-card:active { transform: translateY(-1px) scale(0.99); }
     .stat-card .lbl { font-size: 11px; color: var(--slate-500); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
@@ -103,7 +103,7 @@
     .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.10); transform: translateY(-1px); }
     .field .hint { font-size: 10px; color: var(--slate-500); margin-top: 4px; }
 
-    /* BOTÕES COM ANIMAÇÃO */
+    /* BOTÕES */
     .btn-primary, .btn-clean, .btn-danger, .btn-success, .btn-warning, .btn-info {
       padding: 10px 16px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700;
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -111,14 +111,6 @@
       font-size: 12px; justify-content: center; min-height: 40px;
       position: relative; overflow: hidden; -webkit-user-select: none; user-select: none;
     }
-    .btn-primary::before, .btn-clean::before, .btn-danger::before, .btn-success::before,
-    .btn-warning::before, .btn-info::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 10%, transparent 70%);
-      opacity: 0; transition: opacity 0.5s; pointer-events: none;
-    }
-    .btn-primary:hover::before, .btn-danger:hover::before, .btn-success:hover::before,
-    .btn-warning:hover::before, .btn-info:hover::before { opacity: 1; animation: pop 0.5s ease; }
     .btn-primary { background: var(--verde); color: var(--branco); }
     .btn-primary:hover { background: var(--verde-escuro); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(39, 174, 96, 0.35); }
     .btn-primary:active { transform: translateY(0) scale(0.96); }
@@ -146,7 +138,7 @@
     th { text-align: left; padding: 10px 12px; font-weight: 800; color: var(--slate-600); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--slate-200); }
     td { padding: 10px 12px; border-bottom: 1px solid var(--slate-100); color: var(--slate-700); font-weight: 500; transition: var(--transition); }
     tbody tr { transition: var(--transition); }
-    tbody tr:hover { background: var(--slate-50); transform: scale(1.003); }
+    tbody tr:hover { background: var(--slate-50); }
     tbody tr:last-child td { border-bottom: none; }
 
     .badge-status { padding: 3px 10px; border-radius: 20px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; }
@@ -186,8 +178,6 @@
     .admin-product-card:nth-child(4) { animation-delay: 0.12s; }
     .admin-product-card:nth-child(5) { animation-delay: 0.15s; }
     .admin-product-card:nth-child(6) { animation-delay: 0.18s; }
-    .admin-product-card:nth-child(7) { animation-delay: 0.21s; }
-    .admin-product-card:nth-child(8) { animation-delay: 0.24s; }
     .admin-product-card:hover { box-shadow: var(--sombra-lg); border-color: var(--verde); transform: translateY(-4px) scale(1.01); }
     .admin-product-card:active { transform: translateY(-2px) scale(0.99); }
     .admin-product-card img { width: 100%; height: 110px; object-fit: contain; background: var(--slate-100); border-radius: 8px; padding: 6px; margin-bottom: 8px; transition: transform 0.3s ease; }
@@ -198,11 +188,37 @@
     .admin-product-card .estoque-info { font-size: 11px; color: var(--slate-600); font-weight: 600; margin-bottom: 10px; }
     .admin-product-card .estoque-info strong { color: var(--verde-escuro); font-weight: 800; }
     .admin-product-card .status-badge { margin-bottom: 10px; }
-
     .admin-product-card.is-ativo { border-color: var(--verde); }
     .admin-product-card.is-esgotado { border-color: var(--vermelho); }
     .admin-product-card.is-em_falta { border-color: var(--amarelo-escuro); }
     .admin-product-card.is-oculto { border-color: var(--slate-400); opacity: 0.75; }
+
+    /* ===== ESTOQUE ZERADO ===== */
+    .admin-product-card.sem-estoque {
+      border: 2px dashed var(--vermelho) !important;
+      background: linear-gradient(135deg, #fff 0%, #fff5f5 100%);
+      animation: cardSemEstoque 3s ease-in-out infinite;
+    }
+    .admin-product-card.sem-estoque img { filter: grayscale(35%); opacity: 0.85; }
+    .admin-product-card.sem-estoque .name { color: var(--vermelho); }
+    .estoque-zerado {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: var(--vermelho); color: var(--branco);
+      padding: 4px 10px; border-radius: 20px;
+      font-weight: 800; font-size: 10px;
+      letter-spacing: 0.3px; text-transform: uppercase;
+      animation: pulseZerado 1.8s ease-in-out infinite;
+      box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+    }
+    .admin-product-card.sem-estoque .qa-repor {
+      background: var(--vermelho);
+      color: var(--branco);
+      animation: pulseRepor 1.5s ease-in-out infinite;
+    }
+    .admin-product-card.sem-estoque .qa-repor:hover {
+      background: #c0392b;
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.5);
+    }
 
     /* AÇÕES RÁPIDAS */
     .quick-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; padding-top: 10px; border-top: 1px dashed var(--slate-200); margin-top: 10px; }
@@ -211,17 +227,10 @@
       cursor: pointer; font-family: 'Inter', sans-serif;
       display: flex; align-items: center; justify-content: center; gap: 4px;
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative; overflow: hidden; -webkit-user-select: none; user-select: none;
+      position: relative; overflow: hidden;
     }
-    .quick-actions button::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 10%, transparent 70%);
-      opacity: 0; transition: opacity 0.5s; pointer-events: none;
-    }
-    .quick-actions button:hover::before { opacity: 1; animation: pop 0.5s ease; }
     .quick-actions button:hover { transform: translateY(-2px); }
     .quick-actions button:active { transform: scale(0.92); transition: transform 0.1s; }
-
     .qa-ativo { background: var(--verde); color: var(--branco); }
     .qa-ativo:hover { background: var(--verde-escuro); box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4); }
     .qa-esgotado { background: var(--vermelho); color: var(--branco); }
@@ -235,9 +244,17 @@
     .qa-editar { background: var(--slate-100); color: var(--slate-700); border: 1.5px solid var(--slate-200) !important; }
     .qa-editar:hover { background: var(--slate-200); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
 
+    /* FILTROS */
+    .filter-bar { background: var(--branco); border-radius: var(--radius-sm); padding: 14px; box-shadow: var(--sombra); margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .filter-bar select, .filter-bar input { padding: 8px 12px; border: 1.5px solid var(--slate-200); border-radius: 10px; font-size: 12px; font-family: 'Inter', sans-serif; background: var(--branco); min-height: 38px; flex: 1; min-width: 120px; transition: var(--transition); }
+    .filter-bar select:focus, .filter-bar input:focus { outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.08); }
 
-        /* ============================================================
-       PEDIDOS EM CARDS (substituindo a tabela)
+    .menu-toggle { display: none; background: var(--slate-900); color: var(--branco); border: none; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; align-items: center; justify-content: center; font-size: 18px; transition: var(--transition); }
+    .menu-toggle:hover { background: var(--slate-700); transform: scale(1.05); }
+    .menu-toggle:active { transform: scale(0.95); }
+
+    /* ============================================================
+       🆕 PEDIDOS EM CARDS
        ============================================================ */
     .pedidos-lista {
       display: flex;
@@ -257,20 +274,17 @@
       position: relative;
       overflow: hidden;
     }
-
     .pedido-card:nth-child(1) { animation-delay: 0.03s; }
     .pedido-card:nth-child(2) { animation-delay: 0.06s; }
     .pedido-card:nth-child(3) { animation-delay: 0.09s; }
     .pedido-card:nth-child(4) { animation-delay: 0.12s; }
     .pedido-card:nth-child(5) { animation-delay: 0.15s; }
-
     .pedido-card:hover {
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
       border-color: var(--verde);
       transform: translateY(-2px);
     }
 
-    /* Cabeçalho do card */
     .pedido-header {
       display: flex;
       justify-content: space-between;
@@ -279,7 +293,6 @@
       padding-bottom: 12px;
       border-bottom: 1px dashed var(--slate-200);
     }
-
     .pedido-numero {
       font-weight: 900;
       font-size: 15px;
@@ -288,11 +301,7 @@
       align-items: center;
       gap: 8px;
     }
-
-    .pedido-numero i {
-      color: var(--verde);
-      font-size: 14px;
-    }
+    .pedido-numero i { color: var(--verde); font-size: 14px; }
 
     .pedido-status {
       padding: 4px 12px;
@@ -302,35 +311,12 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
+    .pedido-status.pendente { background: var(--amarelo-bg); color: var(--amarelo-escuro); }
+    .pedido-status.confirmado { background: var(--azul-bg); color: var(--azul); }
+    .pedido-status.entregue { background: var(--verde-bg); color: var(--verde-escuro); }
+    .pedido-status.cancelado { background: var(--vermelho-bg); color: var(--vermelho); }
 
-    .pedido-status.pendente {
-      background: var(--amarelo-bg);
-      color: var(--amarelo-escuro);
-    }
-
-    .pedido-status.confirmado {
-      background: var(--azul-bg);
-      color: var(--azul);
-    }
-
-    .pedido-status.entregue {
-      background: var(--verde-bg);
-      color: var(--verde-escuro);
-    }
-
-    .pedido-status.cancelado {
-      background: var(--vermelho-bg);
-      color: var(--vermelho);
-    }
-
-    /* Informações do pedido */
-    .pedido-info {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 12px;
-    }
-
+    .pedido-info { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
     .pedido-linha {
       display: flex;
       justify-content: space-between;
@@ -339,7 +325,6 @@
       font-size: 12px;
       padding: 4px 0;
     }
-
     .pedido-lbl {
       color: var(--slate-500);
       font-weight: 600;
@@ -349,14 +334,7 @@
       flex-shrink: 0;
       min-width: 90px;
     }
-
-    .pedido-lbl i {
-      color: var(--slate-400);
-      font-size: 11px;
-      width: 12px;
-      text-align: center;
-    }
-
+    .pedido-lbl i { color: var(--slate-400); font-size: 11px; width: 12px; text-align: center; }
     .pedido-val {
       color: var(--slate-800);
       font-weight: 600;
@@ -365,7 +343,6 @@
       word-break: break-word;
     }
 
-    /* Total em destaque */
     .pedido-total {
       display: flex;
       justify-content: space-between;
@@ -378,7 +355,6 @@
       font-weight: 700;
       color: var(--slate-700);
     }
-
     .pedido-total strong {
       color: var(--verde-escuro);
       font-size: 18px;
@@ -386,13 +362,7 @@
       letter-spacing: -0.3px;
     }
 
-    /* Ações do pedido — botões em linha */
-    .pedido-acoes {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
+    .pedido-acoes { display: flex; gap: 6px; flex-wrap: wrap; }
     .pedido-acoes button {
       flex: 1;
       min-width: 80px;
@@ -413,114 +383,18 @@
       -webkit-user-select: none;
       user-select: none;
     }
-
-    .pedido-acoes button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .pedido-acoes button:active {
-      transform: translateY(0) scale(0.96);
-    }
-
-    .pedido-acoes .btn-primary {
-      background: var(--verde);
-      color: var(--branco);
-    }
-    .pedido-acoes .btn-primary:hover {
-      background: var(--verde-escuro);
-      box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
-    }
-
-    .pedido-acoes .btn-warning {
-      background: var(--amarelo);
-      color: var(--slate-800);
-    }
-    .pedido-acoes .btn-warning:hover {
-      background: var(--amarelo-escuro);
-      box-shadow: 0 4px 12px rgba(241, 196, 15, 0.4);
-    }
-
-    .pedido-acoes .btn-success {
-      background: var(--verde);
-      color: var(--branco);
-    }
-    .pedido-acoes .btn-success:hover {
-      background: var(--verde-escuro);
-      box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
-    }
-
-    .pedido-acoes .btn-info {
-      background: var(--azul);
-      color: var(--branco);
-    }
-    .pedido-acoes .btn-info:hover {
-      background: #2980b9;
-      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
-    }
-
-    .pedido-acoes .btn-danger {
-      background: var(--vermelho);
-      color: var(--branco);
-      flex: 0 0 44px;
-      min-width: 44px;
-    }
-    .pedido-acoes .btn-danger:hover {
-      background: #c0392b;
-      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
-    }
-
-    /* Mobile */
-    @media (max-width: 600px) {
-      .pedidos-lista {
-        padding: 12px;
-        gap: 10px;
-      }
-      .pedido-card {
-        padding: 12px;
-      }
-      .pedido-numero {
-        font-size: 13px;
-      }
-      .pedido-status {
-        font-size: 9px;
-        padding: 3px 10px;
-      }
-      .pedido-linha {
-        font-size: 11px;
-      }
-      .pedido-lbl {
-        min-width: 75px;
-        font-size: 10px;
-      }
-      .pedido-total {
-        font-size: 12px;
-        padding: 8px 12px;
-      }
-      .pedido-total strong {
-        font-size: 16px;
-      }
-      .pedido-acoes {
-        gap: 5px;
-      }
-      .pedido-acoes button {
-        min-width: 65px;
-        padding: 8px 6px;
-        font-size: 10px;
-      }
-      .pedido-acoes button span.texto-botao {
-        display: none;
-      }
-    }
-    
-    /* FILTROS */
-    .filter-bar { background: var(--branco); border-radius: var(--radius-sm); padding: 14px; box-shadow: var(--sombra); margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-    .filter-bar select, .filter-bar input { padding: 8px 12px; border: 1.5px solid var(--slate-200); border-radius: 10px; font-size: 12px; font-family: 'Inter', sans-serif; background: var(--branco); min-height: 38px; flex: 1; min-width: 120px; transition: var(--transition); }
-    .filter-bar select:focus, .filter-bar input:focus { outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.08); }
-
-    .menu-toggle { display: none; background: var(--slate-900); color: var(--branco); border: none; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; align-items: center; justify-content: center; font-size: 18px; transition: var(--transition); }
-    .menu-toggle:hover { background: var(--slate-700); transform: scale(1.05); }
-    .menu-toggle:active { transform: scale(0.95); }
+    .pedido-acoes button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+    .pedido-acoes button:active { transform: translateY(0) scale(0.96); }
+    .pedido-acoes .btn-primary { background: var(--verde); color: var(--branco); }
+    .pedido-acoes .btn-primary:hover { background: var(--verde-escuro); box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4); }
+    .pedido-acoes .btn-warning { background: var(--amarelo); color: var(--slate-800); }
+    .pedido-acoes .btn-warning:hover { background: var(--amarelo-escuro); box-shadow: 0 4px 12px rgba(241, 196, 15, 0.4); }
+    .pedido-acoes .btn-success { background: var(--verde); color: var(--branco); }
+    .pedido-acoes .btn-success:hover { background: var(--verde-escuro); box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4); }
+    .pedido-acoes .btn-info { background: var(--azul); color: var(--branco); }
+    .pedido-acoes .btn-info:hover { background: #2980b9; box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4); }
+    .pedido-acoes .btn-danger { background: var(--vermelho); color: var(--branco); flex: 0 0 44px; min-width: 44px; }
+    .pedido-acoes .btn-danger:hover { background: #c0392b; box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4); }
 
     /* TOAST */
     .toast {
@@ -540,53 +414,19 @@
     /* ============================================================
        ANIMAÇÕES DE CLIQUE / LOADING
        ============================================================ */
-    .ripple-container { position: relative; overflow: hidden; }
-    .ripple {
-      position: absolute; border-radius: 50%;
-      background: rgba(255, 255, 255, 0.6);
-      transform: scale(0); animation: rippleEffect 0.6s linear;
-      pointer-events: none; z-index: 1;
-    }
+    .ripple { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.6); transform: scale(0); animation: rippleEffect 0.6s linear; pointer-events: none; z-index: 1; }
     .ripple.dark { background: rgba(0, 0, 0, 0.15); }
-
     .btn-loading { pointer-events: none; opacity: 0.85; position: relative; color: transparent !important; }
-    .btn-loading::after {
-      content: ''; position: absolute; top: 50%; left: 50%;
-      width: 16px; height: 16px; margin: -8px 0 0 -8px;
-      border: 2.5px solid rgba(255, 255, 255, 0.4);
-      border-top-color: #fff; border-radius: 50%;
-      animation: spin 0.7s linear infinite; z-index: 10;
-    }
-
+    .btn-loading::after { content: ''; position: absolute; top: 50%; left: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border: 2.5px solid rgba(255, 255, 255, 0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; z-index: 10; }
     .admin-product-card.clicked { animation: cardClick 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
     .btn-success-flash { animation: successFlash 0.8s ease; }
     .btn-error-flash { animation: errorFlash 0.6s ease; }
     .status-badge.badge-mudando { animation: badgeSwap 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-
-    .admin-product-card.processing::after {
-      content: ''; position: absolute; inset: 0;
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(2px); border-radius: var(--radius-sm);
-      z-index: 5; animation: fadeIn 0.2s ease;
-    }
-    .admin-product-card.processing::before {
-      content: ''; position: absolute; top: 50%; left: 50%;
-      width: 30px; height: 30px; margin: -15px 0 0 -15px;
-      border: 3px solid rgba(39, 174, 96, 0.25);
-      border-top-color: var(--verde); border-radius: 50%;
-      animation: spin 0.7s linear infinite; z-index: 6;
-    }
-
-    .progress-bar {
-      position: fixed; top: 0; left: 0; height: 3px;
-      background: linear-gradient(90deg, var(--verde), #2ecc71);
-      width: 0%; z-index: 9999;
-      transition: width 0.3s ease, opacity 0.3s ease;
-      box-shadow: 0 0 10px rgba(39, 174, 96, 0.6); opacity: 0;
-    }
+    .admin-product-card.processing::after { content: ''; position: absolute; inset: 0; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(2px); border-radius: var(--radius-sm); z-index: 5; }
+    .admin-product-card.processing::before { content: ''; position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border: 3px solid rgba(39, 174, 96, 0.25); border-top-color: var(--verde); border-radius: 50%; animation: spin 0.7s linear infinite; z-index: 6; }
+    .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--verde), #2ecc71); width: 0%; z-index: 9999; transition: width 0.3s ease, opacity 0.3s ease; box-shadow: 0 0 10px rgba(39, 174, 96, 0.6); opacity: 0; }
     .progress-bar.active { opacity: 1; }
     .progress-bar.complete { width: 100% !important; opacity: 0; }
-
     body.processing * { cursor: wait !important; }
 
     @media (max-width: 900px) {
@@ -605,89 +445,20 @@
       .admin-product-card { padding: 10px; }
       .admin-product-card img { height: 90px; }
       .quick-actions button { font-size: 9px; padding: 6px 4px; }
+      .pedidos-lista { padding: 12px; gap: 10px; }
+      .pedido-card { padding: 12px; }
+      .pedido-numero { font-size: 13px; }
+      .pedido-status { font-size: 9px; padding: 3px 10px; }
+      .pedido-linha { font-size: 11px; }
+      .pedido-lbl { min-width: 75px; font-size: 10px; }
+      .pedido-total { font-size: 12px; padding: 8px 12px; }
+      .pedido-total strong { font-size: 16px; }
+      .pedido-acoes { gap: 5px; }
+      .pedido-acoes button { min-width: 65px; padding: 8px 6px; font-size: 10px; }
     }
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--slate-400); }
-
-
-        /* ============================================================
-       ESTOQUE ZERADO — DESTAQUE VISUAL
-       ============================================================ */
-
-    .admin-product-card.sem-estoque {
-      border: 2px dashed var(--vermelho) !important;
-      background: linear-gradient(135deg, #fff 0%, #fff5f5 100%);
-      position: relative;
-      animation: cardSemEstoque 3s ease-in-out infinite;
-    }
-
-    .admin-product-card.sem-estoque::before {
-      content: '';
-      position: absolute;
-      top: -1px;
-      left: -1px;
-      right: -1px;
-      bottom: -1px;
-      border-radius: var(--radius-sm);
-      background: linear-gradient(135deg, transparent, rgba(231, 76, 60, 0.08));
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    @keyframes cardSemEstoque {
-      0%, 100% { box-shadow: 0 2px 8px rgba(231, 76, 60, 0.15); }
-      50% { box-shadow: 0 4px 20px rgba(231, 76, 60, 0.35); }
-    }
-
-    .admin-product-card.sem-estoque img {
-      filter: grayscale(35%);
-      opacity: 0.85;
-    }
-
-    .admin-product-card.sem-estoque .name {
-      color: var(--vermelho);
-    }
-
-    /* Badge de "Estoque Zerado" */
-    .estoque-zerado {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: var(--vermelho);
-      color: var(--branco);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-weight: 800;
-      font-size: 10px;
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
-      animation: pulseZerado 1.8s ease-in-out infinite;
-      box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
-    }
-
-    @keyframes pulseZerado {
-      0%, 100% { transform: scale(1); box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4); }
-      50% { transform: scale(1.05); box-shadow: 0 4px 16px rgba(231, 76, 60, 0.6); }
-    }
-
-    /* Botão "Repor" ganha destaque quando zerado */
-    .admin-product-card.sem-estoque .qa-repor {
-      background: var(--vermelho);
-      color: var(--branco);
-      animation: pulseRepor 1.5s ease-in-out infinite;
-    }
-
-    .admin-product-card.sem-estoque .qa-repor:hover {
-      background: #c0392b;
-      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.5);
-    }
-
-    @keyframes pulseRepor {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.03); }
-    }
-    
   </style>
 </head>
 
@@ -699,8 +470,7 @@
       <img src="assets/logo.png" alt="Sabôr da Fruta" class="logo-img"
         onerror="this.style.display='none'; document.getElementById('loginLogoFallback').style.display='flex';">
       <div id="loginLogoFallback"
-        style="display:none; width:64px; height:64px; border-radius:50%; background:var(--verde); align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:28px; margin:0 auto 16px;">
-        S</div>
+        style="display:none; width:64px; height:64px; border-radius:50%; background:var(--verde); align-items:center; justify-content:center; color:#fff; font-weight:900; font-size:28px; margin:0 auto 16px;">S</div>
       <h1>Painel Administrativo</h1>
       <p>Acesso restrito — Sabôr da Fruta</p>
       <div class="field">
@@ -783,11 +553,10 @@
           <button class="btn-primary btn-sm" onclick="carregarTudo(event)"><i class="fas fa-sync"></i> Atualizar</button>
           <button class="btn-info btn-sm" onclick="gerarPDFPedidos()"><i class="fas fa-file-pdf"></i> PDF</button>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Nº</th><th>Cliente</th><th>Endereço</th><th>Total</th><th>Status</th><th>Ações</th></tr></thead>
-            <tbody id="tabelaPedidos"><tr><td colspan="6" style="text-align:center;color:var(--slate-400);padding:20px;">Carregando...</td></tr></tbody>
-          </table>
+        <div class="table-wrap" id="pedidosContainer">
+          <div class="pedidos-lista" id="tabelaPedidos">
+            <p style="text-align:center;color:var(--slate-400);padding:40px;">Carregando...</p>
+          </div>
         </div>
       </div>
 
@@ -855,7 +624,7 @@
               <span>➕ <strong>Modo Entrada</strong> — Somar ao estoque existente</span>
             </label>
             <div class="hint" style="margin-top:6px;margin-left:26px;">
-              💡 Marque quando estiver <strong>adicionando mercadoria nova</strong>. Ex: se já tem 5 e chegaram 10, marque e coloque 10 — vai virar 15.
+              💡 Marque quando estiver <strong>adicionando mercadoria nova</strong>.
             </div>
           </div>
           <div class="modal-actions">
@@ -958,7 +727,7 @@
     }
 
     // ============================================================
-    // 🎬 EFEITOS DE CLIQUE E LOADING
+    // 🎬 EFEITOS DE CLIQUE
     // ============================================================
     function criarRipple(event, elemento, corEscura = false) {
       const rect = elemento.getBoundingClientRect();
@@ -1243,20 +1012,16 @@
     }
 
     // ============================================================
-    // PEDIDOS
+    // 🆕 PEDIDOS EM CARDS
     // ============================================================
-        function renderizarPedidos() {
+    function renderizarPedidos() {
       const filtro = document.getElementById('filtroStatusPedido')?.value || 'todos';
       const busca = (document.getElementById('filtroBuscaPedido')?.value || '').toLowerCase();
       let lista = pedidos.slice().reverse();
       if (filtro !== 'todos') lista = lista.filter(p => p.status === filtro);
       if (busca) lista = lista.filter(p => (p.cliente?.nome || '').toLowerCase().includes(busca));
       
-      const tbody = document.getElementById('tabelaPedidos');
-      const container = tbody.closest('.table-wrap');
-      
-      // Substitui a tabela por uma lista de cards
-      const tbodyParent = tbody.parentElement.parentElement;
+      const container = document.getElementById('tabelaPedidos');
       
       if (lista.length === 0) {
         container.innerHTML = '<p style="text-align:center;color:var(--slate-400);padding:40px;font-weight:600;">Nenhum pedido encontrado</p>';
@@ -1270,74 +1035,70 @@
         cancelado: { label: '❌ Cancelado', classe: 'cancelado' }
       };
       
-      container.innerHTML = `
-        <div class="pedidos-lista">
-          ${lista.map(p => {
-            const statusInfo = statusLabels[p.status] || statusLabels.pendente;
-            const totalItens = (p.itens || []).reduce((s, i) => s + (i.quantidade || 0), 0);
-            const dataFmt = p.data ? new Date(p.data).toLocaleDateString('pt-BR') : '-';
-            const horaFmt = p.data ? new Date(p.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
-            
-            return `
-              <div class="pedido-card">
-                <div class="pedido-header">
-                  <div class="pedido-numero">
-                    <i class="fas fa-receipt"></i> ${p.numero || '#' + p.id}
-                  </div>
-                  <div class="pedido-status ${statusInfo.classe}">${statusInfo.label}</div>
-                </div>
-                
-                <div class="pedido-info">
-                  <div class="pedido-linha">
-                    <span class="pedido-lbl"><i class="fas fa-user"></i> Cliente</span>
-                    <span class="pedido-val">${p.cliente?.nome || '-'}</span>
-                  </div>
-                  <div class="pedido-linha">
-                    <span class="pedido-lbl"><i class="fas fa-map-marker-alt"></i> Endereço</span>
-                    <span class="pedido-val">${p.cliente?.endereco || '-'}</span>
-                  </div>
-                  ${p.cliente?.obs ? `
-                  <div class="pedido-linha">
-                    <span class="pedido-lbl"><i class="fas fa-comment"></i> Obs</span>
-                    <span class="pedido-val">${p.cliente.obs}</span>
-                  </div>` : ''}
-                  <div class="pedido-linha">
-                    <span class="pedido-lbl"><i class="fas fa-calendar"></i> Data</span>
-                    <span class="pedido-val">${dataFmt} às ${horaFmt}</span>
-                  </div>
-                  <div class="pedido-linha">
-                    <span class="pedido-lbl"><i class="fas fa-box"></i> Itens</span>
-                    <span class="pedido-val">${totalItens} ${totalItens === 1 ? 'item' : 'itens'}</span>
-                  </div>
-                </div>
-                
-                <div class="pedido-total">
-                  <span>Total</span>
-                  <strong>R$ ${(parseFloat(p.total) || 0).toFixed(2).replace('.', ',')}</strong>
-                </div>
-                
-                <div class="pedido-acoes">
-                  <button class="btn-primary" onclick="verPedido('${p.id}', event)" title="Ver detalhes">
-                    <i class="fas fa-eye"></i> Ver
-                  </button>
-                  <button class="btn-warning" onclick="alterarStatus('${p.id}', 'confirmado', event)" title="Confirmar">
-                    <i class="fas fa-check"></i> Confirmar
-                  </button>
-                  <button class="btn-success" onclick="alterarStatus('${p.id}', 'entregue', event)" title="Entregue">
-                    <i class="fas fa-truck"></i> Entregue
-                  </button>
-                  <button class="btn-info" onclick="imprimirPDFPedido('${p.id}')" title="PDF">
-                    <i class="fas fa-file-pdf"></i> PDF
-                  </button>
-                  <button class="btn-danger" onclick="excluirPedido('${p.id}', event)" title="Excluir">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
+      container.innerHTML = lista.map(p => {
+        const statusInfo = statusLabels[p.status] || statusLabels.pendente;
+        const totalItens = (p.itens || []).reduce((s, i) => s + (i.quantidade || 0), 0);
+        const dataFmt = p.data ? new Date(p.data).toLocaleDateString('pt-BR') : '-';
+        const horaFmt = p.data ? new Date(p.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+        
+        return `
+          <div class="pedido-card">
+            <div class="pedido-header">
+              <div class="pedido-numero">
+                <i class="fas fa-receipt"></i> ${p.numero || '#' + p.id}
               </div>
-            `;
-          }).join('')}
-        </div>
-      `;
+              <div class="pedido-status ${statusInfo.classe}">${statusInfo.label}</div>
+            </div>
+            
+            <div class="pedido-info">
+              <div class="pedido-linha">
+                <span class="pedido-lbl"><i class="fas fa-user"></i> Cliente</span>
+                <span class="pedido-val">${p.cliente?.nome || '-'}</span>
+              </div>
+              <div class="pedido-linha">
+                <span class="pedido-lbl"><i class="fas fa-map-marker-alt"></i> Endereço</span>
+                <span class="pedido-val">${p.cliente?.endereco || '-'}</span>
+              </div>
+              ${p.cliente?.obs ? `
+              <div class="pedido-linha">
+                <span class="pedido-lbl"><i class="fas fa-comment"></i> Obs</span>
+                <span class="pedido-val">${p.cliente.obs}</span>
+              </div>` : ''}
+              <div class="pedido-linha">
+                <span class="pedido-lbl"><i class="fas fa-calendar"></i> Data</span>
+                <span class="pedido-val">${dataFmt} às ${horaFmt}</span>
+              </div>
+              <div class="pedido-linha">
+                <span class="pedido-lbl"><i class="fas fa-box"></i> Itens</span>
+                <span class="pedido-val">${totalItens} ${totalItens === 1 ? 'item' : 'itens'}</span>
+              </div>
+            </div>
+            
+            <div class="pedido-total">
+              <span>Total</span>
+              <strong>R$ ${(parseFloat(p.total) || 0).toFixed(2).replace('.', ',')}</strong>
+            </div>
+            
+            <div class="pedido-acoes">
+              <button class="btn-primary" onclick="verPedido('${p.id}', event)">
+                <i class="fas fa-eye"></i> Ver
+              </button>
+              <button class="btn-warning" onclick="alterarStatus('${p.id}', 'confirmado', event)">
+                <i class="fas fa-check"></i> Confirmar
+              </button>
+              <button class="btn-success" onclick="alterarStatus('${p.id}', 'entregue', event)">
+                <i class="fas fa-truck"></i> Entregue
+              </button>
+              <button class="btn-info" onclick="imprimirPDFPedido('${p.id}')">
+                <i class="fas fa-file-pdf"></i> PDF
+              </button>
+              <button class="btn-danger" onclick="excluirPedido('${p.id}', event)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function verPedido(id, event) {
@@ -1493,9 +1254,9 @@
     }
 
     // ============================================================
-    // PRODUTOS ADMIN
+    // PRODUTOS
     // ============================================================
-        function renderizarProdutosAdmin() {
+    function renderizarProdutosAdmin() {
       const grid = document.getElementById('adminProdutosGrid');
       if (produtos.length === 0) {
         grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--slate-500);padding:30px;">Nenhum produto cadastrado</p>';
@@ -1506,8 +1267,6 @@
         const status = p.status || 'ativo';
         const estoque = parseInt(p.estoque) || 0;
         const semEstoque = estoque <= 0;
-        
-        // 🆕 Classe extra + texto especial quando estoque zerado
         const classesExtras = semEstoque ? 'sem-estoque' : '';
         const estoqueTexto = semEstoque
           ? `<span class="estoque-zerado">⚠️ Estoque Zerado</span>`
