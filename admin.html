@@ -92,6 +92,109 @@
     .stat-card.blue { border-left-color: var(--azul); } .stat-card.blue .val { color: var(--azul); }
     .stat-card.purple { border-left-color: var(--roxo); } .stat-card.purple .val { color: var(--roxo); }
 
+        /* ============================================================
+       BOTÃO "VER CATÁLOGO" NO ADMIN
+       ============================================================ */
+    .btn-catalogo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, var(--verde) 0%, var(--verde-escuro) 100%);
+      color: var(--branco) !important;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 3px 12px rgba(39, 174, 96, 0.28);
+      cursor: pointer;
+      border: none;
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .btn-catalogo:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(39, 174, 96, 0.45);
+    }
+
+    .btn-catalogo:active {
+      transform: translateY(0) scale(0.96);
+    }
+
+    .btn-catalogo i {
+      font-size: 14px;
+      animation: pulseIcon 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseIcon {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    /* Botão flutuante mobile */
+    .btn-catalogo-flutuante {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--verde) 0%, var(--verde-escuro) 100%);
+      color: var(--branco);
+      border: none;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 6px 20px rgba(39, 174, 96, 0.5);
+      z-index: 100;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: pulseFloating 2s ease-in-out infinite;
+    }
+
+    .btn-catalogo-flutuante:hover {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 8px 28px rgba(39, 174, 96, 0.7);
+    }
+
+    .btn-catalogo-flutuante:active {
+      transform: scale(0.95);
+    }
+
+    @keyframes pulseFloating {
+      0%, 100% { box-shadow: 0 6px 20px rgba(39, 174, 96, 0.5); }
+      50% { box-shadow: 0 6px 30px rgba(39, 174, 96, 0.8); }
+    }
+
+    /* Ações do topbar */
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .btn-catalogo-desktop {
+        display: none !important;
+      }
+      .btn-catalogo-flutuante {
+        display: flex !important;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .topbar-admin h1 {
+        font-size: 16px !important;
+      }
+      .user-info {
+        font-size: 10px !important;
+      }
+    }
     /* FORM */
     .form-card { background: var(--branco); border-radius: var(--radius-sm); padding: 20px; box-shadow: var(--sombra); margin-bottom: 16px; animation: fadeInUp 0.35s ease; }
     .form-title { font-size: 15px; font-weight: 800; margin-bottom: 14px; color: var(--slate-800); display: flex; align-items: center; gap: 8px; }
@@ -218,6 +321,11 @@
     .admin-product-card.sem-estoque .qa-repor:hover {
       background: #c0392b;
       box-shadow: 0 4px 12px rgba(231, 76, 60, 0.5);
+    }
+
+        /* Botão flutuante só aparece após login */
+    #loginScreen:not([style*="display: none"]) ~ .btn-catalogo-flutuante {
+      display: none !important;
     }
 
     /* AÇÕES RÁPIDAS */
@@ -503,7 +611,10 @@
         <button class="nav-item" onclick="mudarPagina('pedidos', this)"><span class="nav-icon">📋</span> Pedidos</button>
         <button class="nav-item" onclick="mudarPagina('produtos', this)"><span class="nav-icon">🧃</span> Produtos</button>
         <button class="nav-item" onclick="mudarPagina('clientes', this)"><span class="nav-icon">👥</span> Clientes</button>
-        <button class="nav-item" onclick="mudarPagina('config', this)"><span class="nav-icon">⚙️</span> Configurações</button>
+                <button class="nav-item" onclick="mudarPagina('config', this)"><span class="nav-icon">⚙️</span> Configurações</button>
+        <a href="index.html" target="_blank" rel="noopener" class="nav-item" style="text-decoration:none; margin-top:8px; border-top:1px solid rgba(255,255,255,0.08); padding-top:14px;" title="Abrir catálogo em nova aba">
+          <span class="nav-icon">🏪</span> Ver Catálogo
+        </a>
       </nav>
       <div class="sidebar-footer">
         <div>Logado como <strong id="userLogado">admin</strong></div>
@@ -512,12 +623,17 @@
     </aside>
 
     <main class="main-content">
-      <div class="topbar-admin">
+            <div class="topbar-admin">
         <div style="display:flex; align-items:center; gap:12px;">
           <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
           <h1 id="pageTitle">📊 Dashboard</h1>
         </div>
-        <div class="user-info" id="sessaoInfo">🟢 Sistema Online</div>
+        <div class="topbar-actions">
+          <span class="user-info" id="sessaoInfo">🟢 Sistema Online</span>
+          <a href="index.html" target="_blank" rel="noopener" class="btn-catalogo btn-catalogo-desktop" title="Abrir catálogo público">
+            <i class="fas fa-store"></i> Ver Catálogo
+          </a>
+        </div>
       </div>
 
       <!-- DASHBOARD -->
@@ -700,8 +816,13 @@
     </div>
   </div>
 
-  <!-- TOAST -->
+    <!-- TOAST -->
   <div class="toast" id="toast"></div>
+
+  <!-- BOTÃO FLUTUANTE — Ver Catálogo (mobile) -->
+  <a href="index.html" target="_blank" rel="noopener" class="btn-catalogo-flutuante" title="Abrir catálogo público">
+    <i class="fas fa-store"></i>
+  </a>
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzR-7oto26_0PzwLMbK-HZbrjCbep-ySVMcI-NQdbMroC2ZXnmmnWmRtRH4Tip8bCfAog/exec';
