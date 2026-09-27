@@ -110,6 +110,9 @@
     .btn-finalizar:hover { transform: translateY(-1px); }
     .btn-continuar { width: 100%; padding: 9px; background: none; border: none; color: var(--slate-500); font-size: 11px; cursor: pointer; margin-top: 6px; font-family: 'Inter', sans-serif; font-weight: 600; }
     .btn-continuar:hover { color: var(--verde); }
+    /* NOVO: botão limpar carrinho */
+    .btn-limpar { width: 100%; padding: 10px; background: none; border: 1.5px solid var(--vermelho); color: var(--vermelho); font-size: 12px; cursor: pointer; margin-top: 8px; font-family: 'Inter', sans-serif; font-weight: 700; border-radius: 10px; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-limpar:hover { background: var(--vermelho); color: var(--branco); }
 
     /* MODAL CLIENTE */
     .modal-cliente { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 400; justify-content: center; align-items: flex-end; padding: 0; backdrop-filter: blur(5px); }
@@ -229,6 +232,8 @@
       <div class="cart-total-row"><span>Total</span><span class="value" id="cartTotal">R$ 0,00</span></div>
       <button class="btn-finalizar" onclick="abrirModalCliente()"><i class="fas fa-arrow-right"></i> Finalizar Pedido</button>
       <button class="btn-continuar" onclick="fecharCarrinho()">Continuar comprando</button>
+      <!-- NOVO BOTÃO LIMPAR CARRINHO -->
+      <button class="btn-limpar" onclick="limparCarrinho()"><i class="fas fa-trash-alt"></i> Limpar Carrinho</button>
     </div>
   </div>
 
@@ -289,6 +294,9 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzR-7oto26_0PzwLMbK-HZbrjCbep-ySVMcI-NQdbMroC2ZXnmmnWmRtRH4Tip8bCfAog/exec';
     const WHATSAPP_LOJA = '5588999049636';
 
+    // Chave usada para persistir o carrinho no localStorage
+    const CARRINHO_STORAGE_KEY = 'carrinho_sabor_da_fruta';
+
     const PRODUTOS_PADRAO = [
       { id: 'p1', nome: 'Acerola', categoria: 'Polpas', preco: 12.00, imagem: 'assets/acerola.png', status: 'ativo', estoque: 0 },
       { id: 'p2', nome: 'Abacaxi', categoria: 'Polpas', preco: 14.00, imagem: 'assets/abacaxi.png', status: 'ativo', estoque: 0 },
@@ -311,6 +319,44 @@
     let categoriaAtual = 'todos';
     let config = {};
 
+    // ---- PERSISTÊNCIA DO CARRINHO ----
+    function salvarCarrinhoNoStorage() {
+      try {
+        localStorage.setItem(CARRINHO_STORAGE_KEY, JSON.stringify(carrinho));
+      } catch (e) {
+        console.warn('Não foi possível salvar o carrinho:', e);
+      }
+    }
+
+    function carregarCarrinhoDoStorage() {
+      try {
+        const salvo = localStorage.getItem(CARRINHO_STORAGE_KEY);
+        if (salvo) {
+          const dados = JSON.parse(salvo);
+          if (Array.isArray(dados)) {
+            // Valida cada item (garante que tem os campos necessários)
+            carrinho = dados.filter(i =>
+              i && i.id && i.nome && typeof i.preco === 'number' && i.quantidade > 0
+            );
+          }
+        }
+      } catch (e) {
+        console.warn('Não foi possível carregar o carrinho:', e);
+        carrinho = [];
+      }
+    }
+
+    // Limpa completamente o carrinho (com confirmação)
+    function limparCarrinho() {
+      if (carrinho.length === 0) return;
+      if (!confirm('Tem certeza que deseja limpar todo o carrinho?')) return;
+      carrinho = [];
+      salvarCarrinhoNoStorage();
+      renderizarProdutos();
+      renderizarCarrinho();
+    }
+
+    // ---- API ----
     async function chamarAPI(action, dados = {}) {
       try {
         const r = await fetch(SCRIPT_URL, {
@@ -370,8 +416,47 @@
       if (data.success && data.produtos && data.produtos.length > 0) produtos = data.produtos;
       else produtos = [...PRODUTOS_PADRAO];
 
+      // Ajusta o carrinho carregado do storage:
+      // - Atualiza preços e nomes conforme os produtos atuais
+      // - Remove itens de produtos que não existem mais
+      // - Respeita o estoque máximo
+      let alterou = false;
+      carrinho = carrinho.map(item => {
+        const p = produtos.find(x => String(x.id) === String(item.id));
+        if (!p) { alterou = true; return null; } // produto removido
+        const precoAtual = parseFloat(p.preco) || 0;
+        const estoque = parseInt(p.estoque) || 0;
+        const novaQtd = Math.min(item.quantidade, Math.max(1, estoque));
+        if (novaQtd !== item.quantidade || precoAtual !== item.preco || p.nome !== item.nome) {
+          alterou = true;
+        }
+        return {
+          id: p.id,
+          nome: p.nome,
+          preco: precoAtual,
+          imagem: p.imagem,
+          quantidade: Math.max(1, novaQtd)
+        };
+      }).filter(Boolean);
+
+      // Remove itens que ficaram sem estoque
+      carrinho = carrinho.filter(item => {
+        const p = produtos.find(x => String(x.id) === String(item.id));
+        if (!p) return false;
+        const estoque = parseInt(p.estoque) || 0;
+        const status = p.status || 'ativo';
+        if (status === 'esgotado' || status === 'em_falta' || estoque <= 0) {
+          alterou = true;
+          return false;
+        }
+        return true;
+      });
+
+      if (alterou) salvarCarrinhoNoStorage();
+
       renderizarCategorias();
       renderizarProdutos();
+      renderizarCarrinho();
     }
 
     function formatarTelefone(tel) {
@@ -461,40 +546,49 @@
       const status = p.status || 'ativo';
       const estoque = parseInt(p.estoque) || 0;
       if (status === 'esgotado' || status === 'em_falta' || estoque <= 0) { alert('❌ Produto indisponível!'); return; }
-      
+
       const item = carrinho.find(i => String(i.id) === String(id));
       const qtdAtual = item ? item.quantidade : 0;
-      
+
       // Verifica se tem estoque suficiente
       if (qtdAtual + 1 > estoque) {
         alert(`❌ Só temos ${estoque} unidades em estoque.`);
         return;
       }
-      
+
       if (item) item.quantidade++;
       else carrinho.push({ id: p.id, nome: p.nome, preco: parseFloat(p.preco) || 0, imagem: p.imagem, quantidade: 1 });
+      salvarCarrinhoNoStorage(); // <-- persiste
       renderizarProdutos(); renderizarCarrinho();
       if (navigator.vibrate) navigator.vibrate(15);
     }
+
     function alterarQtd(id, delta) {
       const item = carrinho.find(i => String(i.id) === String(id));
       if (!item) return;
       const p = produtos.find(x => String(x.id) === String(id));
       const estoque = p ? parseInt(p.estoque) || 0 : 0;
-      
+
       if (delta > 0 && item.quantidade + 1 > estoque) {
         alert(`❌ Só temos ${estoque} unidades em estoque.`);
         return;
       }
-      
+
       item.quantidade += delta;
       if (item.quantidade <= 0) removerDoCarrinho(id);
-      else { renderizarProdutos(); renderizarCarrinho(); }
+      else {
+        salvarCarrinhoNoStorage(); // <-- persiste
+        renderizarProdutos();
+        renderizarCarrinho();
+      }
     }
+
     function removerDoCarrinho(id) {
       carrinho = carrinho.filter(i => String(i.id) !== String(id));
+      salvarCarrinhoNoStorage(); // <-- persiste
       renderizarProdutos(); renderizarCarrinho();
     }
+
     function renderizarCarrinho() {
       const body = document.getElementById('cartBody');
       const footer = document.getElementById('cartFooter');
@@ -581,6 +675,7 @@
       document.body.style.overflow = 'hidden';
 
       carrinho = [];
+      salvarCarrinhoNoStorage(); // <-- limpa o carrinho persistido após o pedido
       renderizarCarrinho();
       renderizarProdutos();
       document.getElementById('clienteNome').value = '';
@@ -606,7 +701,11 @@
       if (e.target === this) fecharModalCliente();
     });
 
-    document.addEventListener('DOMContentLoaded', () => { carregarTudo(); renderizarCarrinho(); });
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarCarrinhoDoStorage(); // <-- carrega o carrinho salvo ANTES de buscar produtos
+      renderizarCarrinho();         // <-- já mostra o que tem no carrinho
+      carregarTudo();
+    });
   </script>
 </body>
 
