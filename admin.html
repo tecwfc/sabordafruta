@@ -209,7 +209,7 @@
     .status-oculto { background: var(--cinza-bg); color: var(--cinza-escuro); }
 
     /* MODAIS */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 300; justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(4px); }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 300; justify-content: center; align-items: center; padding: 16px; }
     .modal-overlay.show { display: flex; }
     .modal-box { background: var(--branco); border-radius: var(--radius); padding: 24px; max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto; animation: bounceIn 0.4s ease; box-shadow: var(--sombra-lg); }
     .modal-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
@@ -392,7 +392,7 @@
     .btn-success-flash { animation: successFlash 0.8s ease; }
     .btn-error-flash { animation: errorFlash 0.6s ease; }
     .status-badge.badge-mudando { animation: badgeSwap 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-    .admin-product-card.processing::after { content: ''; position: absolute; inset: 0; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(2px); border-radius: var(--radius-sm); z-index: 5; }
+    .admin-product-card.processing::after { content: ''; position: absolute; inset: 0; background: rgba(255, 255, 255, 0.75); border-radius: var(--radius-sm); z-index: 5; }
     .admin-product-card.processing::before { content: ''; position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border: 3px solid rgba(39, 174, 96, 0.25); border-top-color: var(--verde); border-radius: 50%; animation: spin 0.7s linear infinite; z-index: 6; }
     .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--verde), #2ecc71); width: 0%; z-index: 9999; transition: width 0.3s ease, opacity 0.3s ease; box-shadow: 0 0 10px rgba(39, 174, 96, 0.6); opacity: 0; }
     .progress-bar.active { opacity: 1; }
@@ -440,7 +440,7 @@
 </head>
 
 <body>
-
+  
   <!-- LOGIN -->
   <div class="login-screen" id="loginScreen">
     <div class="login-box">
@@ -480,10 +480,13 @@
         <button class="nav-item" onclick="mudarPagina('pedidos', this)"><span class="nav-icon">📋</span> Pedidos</button>
         <button class="nav-item" onclick="mudarPagina('produtos', this)"><span class="nav-icon">🧃</span> Produtos</button>
         <button class="nav-item" onclick="mudarPagina('clientes', this)"><span class="nav-icon">👥</span> Clientes</button>
-                <button class="nav-item" onclick="mudarPagina('config', this)"><span class="nav-icon">⚙️</span> Configurações</button>
-        <a href="index.html" target="_blank" rel="noopener" class="nav-item" style="text-decoration:none; margin-top:8px; border-top:1px solid rgba(255,255,255,0.08); padding-top:14px;" title="Abrir catálogo em nova aba">
+        <button class="nav-item" onclick="mudarPagina('config', this)"><span class="nav-icon">⚙️</span> Configurações</button>
+    
+        <!-- <a href="index.html" target="_blank" rel="noopener" class="nav-item" style="text-decoration:none; margin-top:8px; border-top:1px solid rgba(255,255,255,0.08); padding-top:14px;" title="Abrir catálogo em nova aba">
           <span class="nav-icon">🏪</span> Ver Catálogo
-        </a>
+        </a> -->
+        
+        <button class="nav-item" onclick="mudarPagina('manutencao', this)"><span class="nav-icon">🚧</span> Manutenção</button>
       </nav>
       <div class="sidebar-footer">
         <div>Logado como <strong id="userLogado">admin</strong></div>
@@ -671,6 +674,47 @@
           <button class="btn-primary" onclick="salvarSessao(event)"><i class="fas fa-clock"></i> Salvar</button>
         </div>
       </div>
+
+
+      <!-- MANUTENÇÃO -->
+<div class="page-admin" id="page-manutencao">
+  <div class="form-card">
+    <div class="form-title">🚧 Modo Manutenção</div>
+    <p style="font-size:13px; color:var(--slate-600); margin-bottom:16px; line-height:1.5;">
+      Quando ativado, os clientes verão uma tela de manutenção no catálogo e <strong>não poderão fazer pedidos</strong>.
+    </p>
+
+    <div id="manutStatusBox" style="background:var(--verde-bg); padding:14px; border-radius:10px; margin-bottom:16px; text-align:center; border:1.5px solid var(--verde);">
+      <div style="font-size:32px; margin-bottom:6px;">🟢</div>
+      <div style="font-weight:800; color:var(--verde-escuro);" id="manutStatusTexto">Loja Online</div>
+      <div style="font-size:11px; color:var(--slate-600); margin-top:2px;" id="manutStatusDetalhe">Clientes podem fazer pedidos normalmente</div>
+    </div>
+
+    <div class="field">
+      <label>Mensagem para os clientes</label>
+      <textarea id="manutMensagem" rows="3" placeholder="Ex: Estamos atualizando o estoque. Voltamos em 30 minutos! 🍇" style="width:100%; padding:10px 12px; border:1.5px solid var(--slate-200); border-radius:10px; font-size:14px; font-family:'Inter',sans-serif;"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Tempo de manutenção</label>
+      <select id="manutTempo">
+        <option value="0">Indefinido (até desativar manualmente)</option>
+        <option value="15">15 minutos</option>
+        <option value="30">30 minutos</option>
+        <option value="60">1 hora</option>
+        <option value="120">2 horas</option>
+        <option value="240">4 horas</option>
+      </select>
+      <div class="hint">💡 Se escolher um tempo, o site volta ao ar automaticamente.</div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-warning" onclick="ativarManutencao(event)"><i class="fas fa-tools"></i> Ativar Manutenção</button>
+      <button class="btn-primary" onclick="desativarManutencao(event)"><i class="fas fa-check-circle"></i> Desativar Manutenção</button>
+      <button class="btn-clean" onclick="atualizarStatusManutencao(event)"><i class="fas fa-sync"></i> Atualizar</button>
+    </div>
+  </div>
+</div>
     </main>
   </div>
 
@@ -694,999 +738,981 @@
   </a>
 
   <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzR-7oto26_0PzwLMbK-HZbrjCbep-ySVMcI-NQdbMroC2ZXnmmnWmRtRH4Tip8bCfAog/exec';
-    const ADMIN_USER_PADRAO = 'admin';
-    const ADMIN_PASS_PADRAO = 'admin123';
-    const WHATSAPP_LOJA_PADRAO = '5588999049636';
-    const SESSAO_PADRAO_MIN = 60;
 
-    let produtos = [];
-    let pedidos = [];
-    let clientes = [];
-    let config = {};
-    let sessaoTimer = null;
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzR-7oto26_0PzwLMbK-HZbrjCbep-ySVMcI-NQdbMroC2ZXnmmnWmRtRH4Tip8bCfAog/exec';
+  const WHATSAPP_LOJA_PADRAO = '5588999049636';
+  const SESSAO_PADRAO_MIN = 60;
 
-    // ============================================================
-    // TOAST
-    // ============================================================
-    function mostrarToast(msg, tipo = 'success') {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = 'toast show ' + tipo;
-      setTimeout(() => { t.className = 'toast ' + tipo; }, 2500);
+  let produtos = [];
+  let pedidos = [];
+  let clientes = [];
+  let config = {};
+  let sessaoTimer = null;
+
+  // ============================================================
+  // TOAST
+  // ============================================================
+  function mostrarToast(msg, tipo = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + tipo;
+    setTimeout(() => { t.className = 'toast ' + tipo; }, 2500);
+  }
+
+  // ============================================================
+  // EFEITOS
+  // ============================================================
+  function criarRipple(event, elemento, corEscura = false) {
+    const rect = elemento.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = event.clientX - rect.left - size / 2;
+    const y = event.clientY - rect.top - size / 2;
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple' + (corEscura ? ' dark' : '');
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = x + 'px';
+    ripple.style.top = y + 'px';
+    elemento.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  }
+
+  document.addEventListener('click', function(e) {
+    const btn = e.target.closest('button');
+    if (btn && !btn.disabled) {
+      const bg = getComputedStyle(btn).backgroundColor;
+      const rgb = bg.match(/\d+/g);
+      const escuro = rgb && (parseInt(rgb[0]) + parseInt(rgb[1]) + parseInt(rgb[2])) / 3 < 180;
+      criarRipple(e, btn, !escuro);
     }
+  });
 
-    // ============================================================
-    // 🎬 EFEITOS DE CLIQUE
-    // ============================================================
-    function criarRipple(event, elemento, corEscura = false) {
-      const rect = elemento.getBoundingClientRect();
-      const size = Math.max(rect.width, rect.height);
-      const x = event.clientX - rect.left - size / 2;
-      const y = event.clientY - rect.top - size / 2;
-      const ripple = document.createElement('span');
-      ripple.className = 'ripple' + (corEscura ? ' dark' : '');
-      ripple.style.width = ripple.style.height = size + 'px';
-      ripple.style.left = x + 'px';
-      ripple.style.top = y + 'px';
-      elemento.appendChild(ripple);
-      setTimeout(() => ripple.remove(), 600);
-    }
-
-    document.addEventListener('click', function(e) {
-      const btn = e.target.closest('button');
-      if (btn && !btn.disabled) {
-        const bg = getComputedStyle(btn).backgroundColor;
-        const rgb = bg.match(/\d+/g);
-        const escuro = rgb && (parseInt(rgb[0]) + parseInt(rgb[1]) + parseInt(rgb[2])) / 3 < 180;
-        criarRipple(e, btn, !escuro);
-      }
-    });
-
-    function setLoading(btn, ativo = true) {
-      if (!btn) return;
-      if (ativo) {
-        btn.classList.add('btn-loading');
-        btn.dataset.textoOriginal = btn.innerHTML;
-      } else {
-        btn.classList.remove('btn-loading');
-        if (btn.dataset.textoOriginal) {
-          btn.innerHTML = btn.dataset.textoOriginal;
-          delete btn.dataset.textoOriginal;
-        }
+  function setLoading(btn, ativo = true) {
+    if (!btn) return;
+    if (ativo) {
+      btn.classList.add('btn-loading');
+      btn.dataset.textoOriginal = btn.innerHTML;
+    } else {
+      btn.classList.remove('btn-loading');
+      if (btn.dataset.textoOriginal) {
+        btn.innerHTML = btn.dataset.textoOriginal;
+        delete btn.dataset.textoOriginal;
       }
     }
+  }
 
-    function setCardProcessing(id, ativo = true) {
-      const card = document.querySelector(`.admin-product-card[data-id="${id}"]`);
-      if (!card) return;
-      if (ativo) card.classList.add('processing');
-      else card.classList.remove('processing');
+  function flashBtn(btn, tipo = 'success') {
+    if (!btn) return;
+    const classe = tipo === 'success' ? 'btn-success-flash' : 'btn-error-flash';
+    btn.classList.add(classe);
+    setTimeout(() => btn.classList.remove(classe), 900);
+  }
+
+  function showProgress(ativo = true) {
+    let bar = document.getElementById('progressBar');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'progressBar';
+      bar.className = 'progress-bar';
+      document.body.appendChild(bar);
     }
-
-    function animarBadge(id) {
-      const card = document.querySelector(`.admin-product-card[data-id="${id}"]`);
-      if (!card) return;
-      const badge = card.querySelector('.status-badge');
-      if (badge) {
-        badge.classList.add('badge-mudando');
-        setTimeout(() => badge.classList.remove('badge-mudando'), 500);
-      }
-    }
-
-    function flashBtn(btn, tipo = 'success') {
-      if (!btn) return;
-      const classe = tipo === 'success' ? 'btn-success-flash' : 'btn-error-flash';
-      btn.classList.add(classe);
-      setTimeout(() => btn.classList.remove(classe), 900);
-    }
-
-    function showProgress(ativo = true) {
-      let bar = document.getElementById('progressBar');
-      if (!bar) {
-        bar = document.createElement('div');
-        bar.id = 'progressBar';
-        bar.className = 'progress-bar';
-        document.body.appendChild(bar);
-      }
-      if (ativo) {
-        bar.classList.add('active');
-        bar.classList.remove('complete');
+    if (ativo) {
+      bar.classList.add('active');
+      bar.classList.remove('complete');
+      bar.style.width = '0%';
+      setTimeout(() => bar.style.width = '70%', 50);
+    } else {
+      bar.style.width = '100%';
+      bar.classList.add('complete');
+      setTimeout(() => {
+        bar.classList.remove('active', 'complete');
         bar.style.width = '0%';
-        setTimeout(() => bar.style.width = '70%', 50);
-      } else {
-        bar.style.width = '100%';
-        bar.classList.add('complete');
-        setTimeout(() => {
-          bar.classList.remove('active', 'complete');
-          bar.style.width = '0%';
-        }, 400);
+      }, 400);
+    }
+  }
+
+  function setBodyProcessing(ativo = true) {
+    if (ativo) document.body.classList.add('processing');
+    else document.body.classList.remove('processing');
+  }
+
+  // ============================================================
+  // API
+  // ============================================================
+  async function chamarAPI(action, dados = {}) {
+    try {
+      const response = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action, dados, token: localStorage.getItem('admin_token') || '' })
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const json = await response.json();
+      if (json && json.unauthorized) {
+        ['admin_logged','admin_login_time','admin_token'].forEach(k => localStorage.removeItem(k));
+        alert('⏱️ Sessão expirada! Faça login novamente.');
+        location.reload();
       }
+      return json;
+    } catch (erro) {
+      console.error('API Error:', erro);
+      return { success: false, message: erro.message };
+    }
+  }
+
+  // ============================================================
+  // LOGIN SEGURO (via backend)
+  // ============================================================
+  async function fazerLogin() {
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value.trim();
+    
+    if (!user || !pass) {
+      mostrarToast('❌ Preencha usuário e senha!', 'error');
+      return;
     }
 
-    function setBodyProcessing(ativo = true) {
-      if (ativo) document.body.classList.add('processing');
-      else document.body.classList.remove('processing');
-    }
+    const btn = document.querySelector('.login-box .btn-primary');
+    setLoading(btn, true);
 
-    // ============================================================
-    // API
-    // ============================================================
-    async function chamarAPI(action, dados = {}) {
-      try {
-        const response = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action, dados })
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return await response.json();
-      } catch (erro) {
-        console.error('API Error:', erro);
-        return { success: false, message: erro.message };
-      }
-    }
+    try {
+      const resposta = await chamarAPI('login', { user, pass });
 
-    // ============================================================
-    // LOGIN
-    // ============================================================
-    function fazerLogin() {
-      const user = document.getElementById('loginUser').value.trim();
-      const pass = document.getElementById('loginPass').value.trim();
-      const storedUser = localStorage.getItem('admin_user') || ADMIN_USER_PADRAO;
-      const storedPass = localStorage.getItem('admin_pass') || ADMIN_PASS_PADRAO;
-      if (user === storedUser && pass === storedPass) {
+      if (resposta.success) {
         localStorage.setItem('admin_logged', 'true');
         localStorage.setItem('admin_login_time', Date.now().toString());
-        document.getElementById('userLogado').textContent = user;
+        localStorage.setItem('admin_token', resposta.token);
+        localStorage.setItem('admin_user', resposta.user);
+
+        document.getElementById('userLogado').textContent = resposta.user;
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('adminLayout').classList.add('show');
         iniciarSessao();
         carregarTudo();
+        atualizarStatusManutencao();
       } else {
-        mostrarToast('❌ Usuário ou senha incorretos!', 'error');
+        mostrarToast('❌ ' + (resposta.message || 'Usuário ou senha incorretos!'), 'error');
+        flashBtn(btn, 'error');
       }
+    } catch (e) {
+      mostrarToast('❌ Erro ao conectar com o servidor.', 'error');
+    } finally {
+      setLoading(btn, false);
     }
+  }
 
-    function fazerLogout() {
-      if (!confirm('Deseja sair do painel?')) return;
-      localStorage.removeItem('admin_logged');
-      localStorage.removeItem('admin_login_time');
-      location.reload();
-    }
+  function fazerLogout() {
+    if (!confirm('Deseja sair do painel?')) return;
+    localStorage.removeItem('admin_logged');
+    localStorage.removeItem('admin_login_time');
+    localStorage.removeItem('admin_token');
+    location.reload();
+  }
 
-    function iniciarSessao() {
-      if (sessaoTimer) clearInterval(sessaoTimer);
-      const minutos = parseInt(localStorage.getItem('admin_sessao_min') || SESSAO_PADRAO_MIN);
-      sessaoTimer = setInterval(() => {
-        const loginTime = parseInt(localStorage.getItem('admin_login_time') || '0');
-        const decorrido = (Date.now() - loginTime) / 1000 / 60;
-        const restante = minutos - decorrido;
-        if (restante <= 0) {
-          alert('⏱️ Sessão expirada! Faça login novamente.');
-          localStorage.removeItem('admin_logged');
-          localStorage.removeItem('admin_login_time');
-          location.reload();
-        } else {
-          const info = document.getElementById('sessaoInfo');
-          if (info) info.textContent = `🟢 Sessão expira em ${Math.ceil(restante)} min`;
-        }
-      }, 30000);
-    }
-
-    function verificarSessaoAtiva() {
-      if (localStorage.getItem('admin_logged') !== 'true') return false;
-      const minutos = parseInt(localStorage.getItem('admin_sessao_min') || SESSAO_PADRAO_MIN);
+  function iniciarSessao() {
+    if (sessaoTimer) clearInterval(sessaoTimer);
+    const minutos = parseInt(localStorage.getItem('admin_sessao_min') || SESSAO_PADRAO_MIN);
+    sessaoTimer = setInterval(() => {
       const loginTime = parseInt(localStorage.getItem('admin_login_time') || '0');
       const decorrido = (Date.now() - loginTime) / 1000 / 60;
-      if (decorrido > minutos) {
-        localStorage.removeItem('admin_logged');
-        localStorage.removeItem('admin_login_time');
-        return false;
-      }
-      return true;
-    }
-
-    function mudarPagina(pagina, btn) {
-      document.querySelectorAll('.page-admin').forEach(p => p.classList.remove('active'));
-      document.getElementById('page-' + pagina).classList.add('active');
-      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      const titles = { dashboard: '📊 Dashboard', pedidos: '📋 Pedidos', produtos: '🧃 Produtos', clientes: '👥 Clientes', config: '⚙️ Configurações' };
-      document.getElementById('pageTitle').textContent = titles[pagina] || 'Admin';
-      if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
-    }
-
-    // ============================================================
-    // CARREGAR DADOS
-    // ============================================================
-    async function carregarTudo(event) {
-      const btn = event ? event.currentTarget : null;
-      if (btn) setLoading(btn, true);
-      showProgress(true);
-      setBodyProcessing(true);
-      
-      await carregarProdutos();
-      await carregarPedidos();
-      await carregarConfig();
-      renderizarDashboard();
-      renderizarPedidos();
-      renderizarProdutosAdmin();
-      renderizarClientes();
-      
-      showProgress(false);
-      setBodyProcessing(false);
-      if (btn) {
-        setLoading(btn, false);
-        flashBtn(btn, 'success');
-      }
-    }
-
-    async function carregarProdutos() {
-      const data = await chamarAPI('obterProdutos');
-      if (data.success && data.produtos) produtos = data.produtos;
-      else produtos = JSON.parse(localStorage.getItem('produtos_cache') || '[]');
-      if (produtos.length === 0) {
-        produtos = [
-          { id: 'p1', nome: 'Acerola', categoria: 'Polpas', preco: 12, imagem: 'assets/acerola.png', status: 'ativo', estoque: 0 },
-          { id: 'p2', nome: 'Abacaxi', categoria: 'Polpas', preco: 14, imagem: 'assets/abacaxi.png', status: 'ativo', estoque: 0 },
-          { id: 'p3', nome: 'Abacaxi c/ Hortelã', categoria: 'Polpas', preco: 16, imagem: 'assets/abacaxi-hortela.png', status: 'ativo', estoque: 0 },
-          { id: 'p4', nome: 'Cajá', categoria: 'Polpas', preco: 18, imagem: 'assets/caja.png', status: 'ativo', estoque: 0 },
-          { id: 'p5', nome: 'Caju', categoria: 'Polpas', preco: 12, imagem: 'assets/caju.png', status: 'ativo', estoque: 0 },
-          { id: 'p6', nome: 'Cajarana', categoria: 'Polpas', preco: 14, imagem: 'assets/cajarana.png', status: 'ativo', estoque: 0 },
-          { id: 'p7', nome: 'Goiaba', categoria: 'Polpas', preco: 10, imagem: 'assets/goiaba.png', status: 'ativo', estoque: 0 },
-          { id: 'p8', nome: 'Graviola', categoria: 'Polpas', preco: 22, imagem: 'assets/graviola.png', status: 'ativo', estoque: 0 },
-          { id: 'p9', nome: 'Limão', categoria: 'Polpas', preco: 18, imagem: 'assets/limao.png', status: 'ativo', estoque: 0 },
-          { id: 'p10', nome: 'Maracujá', categoria: 'Polpas', preco: 22, imagem: 'assets/maracuja.png', status: 'ativo', estoque: 0 },
-          { id: 'p11', nome: 'Morango', categoria: 'Polpas', preco: 22, imagem: 'assets/morango.png', status: 'ativo', estoque: 0 },
-          { id: 'p12', nome: 'Manga', categoria: 'Polpas', preco: 10, imagem: 'assets/manga.png', status: 'ativo', estoque: 0 },
-          { id: 'p13', nome: 'Mamão', categoria: 'Polpas', preco: 10, imagem: 'assets/mamao.png', status: 'ativo', estoque: 0 },
-          { id: 'p14', nome: 'Tamarindo', categoria: 'Polpas', preco: 10, imagem: 'assets/tamarindo.png', status: 'ativo', estoque: 0 }
-        ];
-      }
-      localStorage.setItem('produtos_cache', JSON.stringify(produtos));
-    }
-
-    async function carregarPedidos() {
-      const data = await chamarAPI('obterPedidos');
-      if (data.success && data.pedidos) pedidos = data.pedidos;
-      else pedidos = JSON.parse(localStorage.getItem('pedidos_cache') || '[]');
-      localStorage.setItem('pedidos_cache', JSON.stringify(pedidos));
-    }
-
-    async function carregarConfig() {
-      const data = await chamarAPI('obterConfig');
-      if (data.success && data.config) config = data.config;
-      const localCfg = localStorage.getItem('config_loja');
-      if (localCfg) { try { config = { ...config, ...JSON.parse(localCfg) }; } catch (e) { } }
-      document.getElementById('cfgNome').value = config.nome || 'Sabôr da Fruta';
-      document.getElementById('cfgWhats').value = config.whats || WHATSAPP_LOJA_PADRAO;
-      document.getElementById('cfgEndereco').value = config.endereco || 'Paulo de Tarso e Luzanir';
-      document.getElementById('cfgMsg').value = config.msg || 'Polpas de fruta naturais — Pacotes com 10 unidades (1kg)';
-      document.getElementById('cfgHeroTitulo').value = config.heroTitulo || '🍇 Catálogo de Pedidos';
-      document.getElementById('cfgCor').value = config.cor || '#27ae60';
-      document.getElementById('cfgAvisoAtivo').value = config.avisoAtivo || 'nao';
-      document.getElementById('cfgAvisoTexto').value = config.avisoTexto || '';
-      document.getElementById('cfgUser').value = localStorage.getItem('admin_user') || ADMIN_USER_PADRAO;
-      document.getElementById('cfgSessao').value = localStorage.getItem('admin_sessao_min') || SESSAO_PADRAO_MIN;
-    }
-
-    // ============================================================
-    // DASHBOARD
-    // ============================================================
-    function renderizarDashboard() {
-      const hoje = new Date().toISOString().split('T')[0];
-      const pedidosHoje = pedidos.filter(p => (p.data || '').startsWith(hoje));
-      const pendentes = pedidos.filter(p => p.status === 'pendente');
-      const faturamentoHoje = pedidosHoje.reduce((s, p) => s + (parseFloat(p.total) || 0), 0);
-      document.getElementById('dashPedidosHoje').textContent = pedidosHoje.length;
-      document.getElementById('dashPendentes').textContent = pendentes.length;
-      document.getElementById('dashFaturamento').textContent = 'R$ ' + faturamentoHoje.toFixed(2).replace('.', ',');
-      document.getElementById('dashProdutos').textContent = produtos.length;
-
-      const ultimos = pedidos.slice().reverse().slice(0, 5);
-      const tbody = document.getElementById('dashUltimosPedidos');
-      if (ultimos.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--slate-400);padding:20px;">Nenhum pedido ainda</td></tr>';
+      const restante = minutos - decorrido;
+      if (restante <= 0) {
+        alert('⏱️ Sessão expirada! Faça login novamente.');
+        fazerLogout();
       } else {
-        tbody.innerHTML = ultimos.map(p => `
+        const info = document.getElementById('sessaoInfo');
+        if (info) info.textContent = `🟢 Sessão expira em ${Math.ceil(restante)} min`;
+      }
+    }, 30000);
+  }
+
+  function verificarSessaoAtiva() {
+    if (localStorage.getItem('admin_logged') !== 'true') return false;
+    const minutos = parseInt(localStorage.getItem('admin_sessao_min') || SESSAO_PADRAO_MIN);
+    const loginTime = parseInt(localStorage.getItem('admin_login_time') || '0');
+    const decorrido = (Date.now() - loginTime) / 1000 / 60;
+    if (decorrido > minutos) {
+      localStorage.removeItem('admin_logged');
+      localStorage.removeItem('admin_login_time');
+      localStorage.removeItem('admin_token');
+      return false;
+    }
+    return true;
+  }
+
+  function mudarPagina(pagina, btn) {
+    document.querySelectorAll('.page-admin').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + pagina).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    const titles = {
+      dashboard: '📊 Dashboard',
+      pedidos: '📋 Pedidos',
+      produtos: '🧃 Produtos',
+      clientes: '👥 Clientes',
+      manutencao: '🚧 Manutenção',
+      config: '⚙️ Configurações'
+    };
+    document.getElementById('pageTitle').textContent = titles[pagina] || 'Admin';
+    if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+    if (pagina === 'manutencao') atualizarStatusManutencao();
+  }
+
+  // ============================================================
+  // CARREGAR DADOS (em paralelo - mais rápido)
+  // ============================================================
+  async function carregarTudo(event) {
+  const btn = event ? event.currentTarget : null;
+  if (btn) setLoading(btn, true);
+  showProgress(true);
+  setBodyProcessing(true);
+
+  try {
+    // Config do localStorage (evita chamada se tiver menos de 5 min)
+    const cfgLocal = localStorage.getItem('config_loja');
+    const cfgTime = parseInt(localStorage.getItem('config_loja_time') || '0');
+    const cfgValida = cfgLocal && (Date.now() - cfgTime < 5 * 60 * 1000);
+
+    // Mostra o cache local na hora, enquanto busca o painel (1 única requisição)
+    if (!produtos.length) {
+      try {
+        produtos = JSON.parse(localStorage.getItem('produtos_cache') || '[]');
+        pedidos = JSON.parse(localStorage.getItem('pedidos_cache') || '[]');
+        if (produtos.length) { renderizarDashboard(); renderizarPedidos(); renderizarProdutosAdmin(); renderizarClientes(); }
+      } catch (e) {}
+    }
+    const painel = await chamarAPI('obterPainel', { limite: 100 });
+    const produtosRes = painel, pedidosRes = painel, configRes = painel;
+
+    // Produtos
+    if (produtosRes.success && produtosRes.produtos) produtos = produtosRes.produtos;
+    else produtos = JSON.parse(localStorage.getItem('produtos_cache') || '[]');
+    if (produtos.length === 0) produtos = carregarProdutosPadraoFallback();
+
+    // Pedidos
+    if (pedidosRes.success && pedidosRes.pedidos) pedidos = pedidosRes.pedidos;
+    else pedidos = JSON.parse(localStorage.getItem('pedidos_cache') || '[]');
+
+    // Config
+    if (configRes && configRes.success && configRes.config) {
+      config = configRes.config;
+      localStorage.setItem('config_loja', JSON.stringify(config));
+      localStorage.setItem('config_loja_time', Date.now().toString());
+    } else if (cfgLocal) {
+      try { config = JSON.parse(cfgLocal); } catch(e){}
+    }
+
+    localStorage.setItem('produtos_cache', JSON.stringify(produtos));
+    localStorage.setItem('pedidos_cache', JSON.stringify(pedidos));
+
+    renderizarDashboard();
+    renderizarPedidos();
+    renderizarProdutosAdmin();
+    renderizarClientes();
+    preencherConfigForm();
+  } catch (e) {
+    console.error(e);
+  } finally {
+    showProgress(false);
+    setBodyProcessing(false);
+    if (btn) {
+      setLoading(btn, false);
+      flashBtn(btn, 'success');
+    }
+  }
+}
+
+  function carregarProdutosPadraoFallback() {
+    return [
+      { id: 'p1', nome: 'Acerola', categoria: 'Polpas', preco: 12, imagem: 'assets/acerola.png', status: 'ativo', estoque: 0 },
+      { id: 'p2', nome: 'Abacaxi', categoria: 'Polpas', preco: 14, imagem: 'assets/abacaxi.png', status: 'ativo', estoque: 0 },
+      { id: 'p3', nome: 'Abacaxi c/ Hortelã', categoria: 'Polpas', preco: 16, imagem: 'assets/abacaxi-hortela.png', status: 'ativo', estoque: 0 },
+      { id: 'p4', nome: 'Cajá', categoria: 'Polpas', preco: 18, imagem: 'assets/caja.png', status: 'ativo', estoque: 0 },
+      { id: 'p5', nome: 'Caju', categoria: 'Polpas', preco: 12, imagem: 'assets/caju.png', status: 'ativo', estoque: 0 },
+      { id: 'p6', nome: 'Cajarana', categoria: 'Polpas', preco: 14, imagem: 'assets/cajarana.png', status: 'ativo', estoque: 0 },
+      { id: 'p7', nome: 'Goiaba', categoria: 'Polpas', preco: 10, imagem: 'assets/goiaba.png', status: 'ativo', estoque: 0 },
+      { id: 'p8', nome: 'Graviola', categoria: 'Polpas', preco: 22, imagem: 'assets/graviola.png', status: 'ativo', estoque: 0 },
+      { id: 'p9', nome: 'Limão', categoria: 'Polpas', preco: 18, imagem: 'assets/limao.png', status: 'ativo', estoque: 0 },
+      { id: 'p10', nome: 'Maracujá', categoria: 'Polpas', preco: 22, imagem: 'assets/maracuja.png', status: 'ativo', estoque: 0 },
+      { id: 'p11', nome: 'Morango', categoria: 'Polpas', preco: 22, imagem: 'assets/morango.png', status: 'ativo', estoque: 0 },
+      { id: 'p12', nome: 'Manga', categoria: 'Polpas', preco: 10, imagem: 'assets/manga.png', status: 'ativo', estoque: 0 },
+      { id: 'p13', nome: 'Mamão', categoria: 'Polpas', preco: 10, imagem: 'assets/mamao.png', status: 'ativo', estoque: 0 },
+      { id: 'p14', nome: 'Tamarindo', categoria: 'Polpas', preco: 10, imagem: 'assets/tamarindo.png', status: 'ativo', estoque: 0 }
+    ];
+  }
+
+  function preencherConfigForm() {
+    document.getElementById('cfgNome').value = config.nome || 'Sabôr da Fruta';
+    document.getElementById('cfgWhats').value = config.whats || WHATSAPP_LOJA_PADRAO;
+    document.getElementById('cfgEndereco').value = config.endereco || 'Paulo de Tarso e Luzanir';
+    document.getElementById('cfgMsg').value = config.msg || 'Polpas de fruta naturais — Pacotes com 10 unidades (1kg)';
+    document.getElementById('cfgHeroTitulo').value = config.heroTitulo || '🍇 Catálogo de Pedidos';
+    document.getElementById('cfgCor').value = config.cor || '#27ae60';
+    document.getElementById('cfgAvisoAtivo').value = config.avisoAtivo || 'nao';
+    document.getElementById('cfgAvisoTexto').value = config.avisoTexto || '';
+    document.getElementById('cfgSessao').value = localStorage.getItem('admin_sessao_min') || SESSAO_PADRAO_MIN;
+  }
+
+  // ============================================================
+  // 🚧 MANUTENÇÃO
+  // ============================================================
+  async function atualizarStatusManutencao(event) {
+    const btn = event ? event.currentTarget : null;
+    if (btn) setLoading(btn, true);
+    
+    try {
+      const r = await chamarAPI('statusManutencao');
+      const box = document.getElementById('manutStatusBox');
+      const texto = document.getElementById('manutStatusTexto');
+      const detalhe = document.getElementById('manutStatusDetalhe');
+      
+      if (r.ativa) {
+        box.style.background = 'var(--vermelho-bg)';
+        box.style.borderColor = 'var(--vermelho)';
+        box.querySelector('div').textContent = '🔴';
+        texto.textContent = 'LOJA EM MANUTENÇÃO';
+        texto.style.color = 'var(--vermelho)';
+        
+        let tempoTxt = 'Tempo indefinido (até desativar)';
+        if (r.tempoRestante > 0) {
+          const min = Math.ceil(r.tempoRestante / 60);
+          tempoTxt = `Volta automaticamente em ${min} min`;
+        }
+        detalhe.textContent = tempoTxt;
+        document.getElementById('manutMensagem').value = r.mensagem || '';
+      } else {
+        box.style.background = 'var(--verde-bg)';
+        box.style.borderColor = 'var(--verde)';
+        box.querySelector('div').textContent = '🟢';
+        texto.textContent = 'Loja Online';
+        texto.style.color = 'var(--verde-escuro)';
+        detalhe.textContent = 'Clientes podem fazer pedidos normalmente';
+      }
+    } catch(e) {
+      mostrarToast('❌ Erro ao verificar status', 'error');
+    } finally {
+      if (btn) { setLoading(btn, false); flashBtn(btn, 'success'); }
+    }
+  }
+
+  async function ativarManutencao(event) {
+    const btn = event ? event.currentTarget : null;
+    const msg = document.getElementById('manutMensagem').value.trim() || 'Estamos em manutenção. Voltamos em breve! 🍇';
+    const tempo = document.getElementById('manutTempo').value;
+    
+    if (!confirm('⚠️ Tem certeza que deseja ATIVAR o modo manutenção?\n\nOs clientes NÃO poderão fazer pedidos.')) return;
+    
+    if (btn) setLoading(btn, true);
+    try {
+      const r = await chamarAPI('ativarManutencao', { mensagem: msg, tempo: tempo });
+      if (r.success) {
+        mostrarToast('🚧 Modo manutenção ATIVADO!');
+        await atualizarStatusManutencao();
+      } else {
+        mostrarToast('❌ ' + r.message, 'error');
+        flashBtn(btn, 'error');
+      }
+    } finally {
+      if (btn) setLoading(btn, false);
+    }
+  }
+
+  async function desativarManutencao(event) {
+    const btn = event ? event.currentTarget : null;
+    if (!confirm('✅ Desativar manutenção e voltar ao ar?')) return;
+    
+    if (btn) setLoading(btn, true);
+    try {
+      const r = await chamarAPI('desativarManutencao');
+      if (r.success) {
+        mostrarToast('✅ Loja voltou ao ar!');
+        await atualizarStatusManutencao();
+      } else {
+        mostrarToast('❌ ' + r.message, 'error');
+      }
+    } finally {
+      if (btn) setLoading(btn, false);
+    }
+  }
+
+  // ============================================================
+  // DASHBOARD
+  // ============================================================
+  function renderizarDashboard() {
+    const hoje = new Date().toISOString().split('T')[0];
+    const pedidosHoje = pedidos.filter(p => (p.data || '').startsWith(hoje));
+    const pendentes = pedidos.filter(p => p.status === 'pendente');
+    const faturamentoHoje = pedidosHoje.reduce((s, p) => s + (parseFloat(p.total) || 0), 0);
+    document.getElementById('dashPedidosHoje').textContent = pedidosHoje.length;
+    document.getElementById('dashPendentes').textContent = pendentes.length;
+    document.getElementById('dashFaturamento').textContent = 'R$ ' + faturamentoHoje.toFixed(2).replace('.', ',');
+    document.getElementById('dashProdutos').textContent = produtos.length;
+
+    const ultimos = pedidos.slice().reverse().slice(0, 5);
+    const tbody = document.getElementById('dashUltimosPedidos');
+    if (ultimos.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--slate-400);padding:20px;">Nenhum pedido ainda</td></tr>';
+    } else {
+      tbody.innerHTML = ultimos.map(p => `
+        <tr>
+          <td><strong>${p.numero || '#' + p.id}</strong></td>
+          <td>${p.cliente?.nome || '-'}</td>
+          <td><strong>R$ ${(parseFloat(p.total) || 0).toFixed(2).replace('.', ',')}</strong></td>
+          <td><span class="badge-status ${p.status}">${p.status}</span></td>
+          <td>${new Date(p.data).toLocaleDateString('pt-BR')}</td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  // ============================================================
+  // PEDIDOS
+  // ============================================================
+  function renderizarPedidos() {
+    const filtro = document.getElementById('filtroStatusPedido')?.value || 'todos';
+    const busca = (document.getElementById('filtroBuscaPedido')?.value || '').toLowerCase();
+    let lista = pedidos.slice().reverse();
+    if (filtro !== 'todos') lista = lista.filter(p => p.status === filtro);
+    if (busca) lista = lista.filter(p => (p.cliente?.nome || '').toLowerCase().includes(busca));
+    
+    const container = document.getElementById('tabelaPedidos');
+    
+    if (lista.length === 0) {
+      container.innerHTML = '<p style="text-align:center;color:var(--slate-400);padding:40px;font-weight:600;">Nenhum pedido encontrado</p>';
+      return;
+    }
+    
+    const statusLabels = {
+      pendente: { label: '⏳ Pendente', classe: 'pendente' },
+      confirmado: { label: '✅ Confirmado', classe: 'confirmado' },
+      entregue: { label: '🚚 Entregue', classe: 'entregue' },
+      cancelado: { label: '❌ Cancelado', classe: 'cancelado' }
+    };
+    
+    container.innerHTML = lista.map(p => {
+      const statusInfo = statusLabels[p.status] || statusLabels.pendente;
+      const totalItens = (p.itens || []).reduce((s, i) => s + (i.quantidade || 0), 0);
+      const dataFmt = p.data ? new Date(p.data).toLocaleDateString('pt-BR') : '-';
+      const horaFmt = p.data ? new Date(p.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+      
+      return `
+        <div class="pedido-card">
+          <div class="pedido-header">
+            <div class="pedido-numero"><i class="fas fa-receipt"></i> ${p.numero || '#' + p.id}</div>
+            <div class="pedido-status ${statusInfo.classe}">${statusInfo.label}</div>
+          </div>
+          <div class="pedido-info">
+            <div class="pedido-linha"><span class="pedido-lbl"><i class="fas fa-user"></i> Cliente</span><span class="pedido-val">${p.cliente?.nome || '-'}</span></div>
+            <div class="pedido-linha"><span class="pedido-lbl"><i class="fas fa-map-marker-alt"></i> Endereço</span><span class="pedido-val">${p.cliente?.endereco || '-'}</span></div>
+            ${p.cliente?.obs ? `<div class="pedido-linha"><span class="pedido-lbl"><i class="fas fa-comment"></i> Obs</span><span class="pedido-val">${p.cliente.obs}</span></div>` : ''}
+            <div class="pedido-linha"><span class="pedido-lbl"><i class="fas fa-calendar"></i> Data</span><span class="pedido-val">${dataFmt} às ${horaFmt}</span></div>
+            <div class="pedido-linha"><span class="pedido-lbl"><i class="fas fa-box"></i> Itens</span><span class="pedido-val">${totalItens} ${totalItens === 1 ? 'item' : 'itens'}</span></div>
+          </div>
+          <div class="pedido-total"><span>Total</span><strong>R$ ${(parseFloat(p.total) || 0).toFixed(2).replace('.', ',')}</strong></div>
+          <div class="pedido-acoes">
+            <button class="btn-primary" onclick="verPedido('${p.id}', event)"><i class="fas fa-eye"></i> Ver</button>
+            <button class="btn-warning" onclick="alterarStatus('${p.id}', 'confirmado', event)"><i class="fas fa-check"></i> Confirmar</button>
+            <button class="btn-success" onclick="alterarStatus('${p.id}', 'entregue', event)"><i class="fas fa-truck"></i> Entregue</button>
+            <button class="btn-info" onclick="imprimirPDFPedido('${p.id}')"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button class="btn-danger" onclick="excluirPedido('${p.id}', event)"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function verPedido(id, event) {
+    const btn = event ? event.currentTarget : null;
+    const p = pedidos.find(x => String(x.id) === String(id));
+    if (!p) return;
+    const itensHtml = (p.itens || []).map(i => `
+      <tr><td>${i.nome}</td><td>${i.quantidade}x</td><td>R$ ${(parseFloat(i.preco) || 0).toFixed(2).replace('.', ',')}</td><td><strong>R$ ${((i.preco || 0) * (i.quantidade || 0)).toFixed(2).replace('.', ',')}</strong></td></tr>
+    `).join('');
+    document.getElementById('detalhesPedidoContent').innerHTML = `
+      <div style="background:var(--slate-50); padding:14px; border-radius:10px; margin-bottom:14px;">
+        <div style="font-weight:900; font-size:16px; margin-bottom:6px;">${p.numero || '#' + p.id}</div>
+        <div style="font-size:13px; color:var(--slate-600);"><strong>Cliente:</strong> ${p.cliente?.nome || '-'}</div>
+        <div style="font-size:13px; color:var(--slate-600);"><strong>Endereço:</strong> ${p.cliente?.endereco || '-'}</div>
+        ${p.cliente?.obs ? `<div style="font-size:13px; color:var(--slate-600);"><strong>Obs:</strong> ${p.cliente.obs}</div>` : ''}
+        <div style="font-size:13px; color:var(--slate-600); margin-top:6px;"><strong>Data:</strong> ${new Date(p.data).toLocaleString('pt-BR')}</div>
+        <div style="margin-top:8px;"><span class="badge-status ${p.status}">${p.status}</span></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Produto</th><th>Qtd</th><th>Preço</th><th>Subtotal</th></tr></thead>
+          <tbody>${itensHtml}</tbody>
+          <tfoot><tr style="background:var(--verde-bg);"><td colspan="3" style="text-align:right; font-weight:800;">TOTAL:</td><td style="font-weight:900; color:var(--verde-escuro); font-size:15px;">R$ ${(parseFloat(p.total) || 0).toFixed(2).replace('.', ',')}</td></tr></tfoot>
+        </table>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-info" onclick="imprimirPDFPedido('${p.id}')"><i class="fas fa-file-pdf"></i> PDF</button>
+        <button class="btn-primary" onclick="window.open('https://wa.me/${config.whats || WHATSAPP_LOJA_PADRAO}?text=' + encodeURIComponent('Olá ${p.cliente?.nome || ''}! Sobre seu pedido ${p.numero || ''}...'), '_blank')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+        <button class="btn-clean" onclick="fecharModalPedido()">Fechar</button>
+      </div>
+    `;
+    document.getElementById('modalPedido').classList.add('show');
+    if (btn) flashBtn(btn, 'success');
+  }
+
+  function fecharModalPedido() { document.getElementById('modalPedido').classList.remove('show'); }
+
+  async function alterarStatus(id, novoStatus, event) {
+  const btn = event ? event.currentTarget : null;
+  const p = pedidos.find(x => String(x.id) === String(id));
+  if (!p) return;
+  
+  if (btn) setLoading(btn, true);
+  p.status = novoStatus;
+  renderizarPedidos();
+  renderizarDashboard();
+  localStorage.setItem('pedidos_cache', JSON.stringify(pedidos));
+  
+  chamarAPI('atualizarStatusPedido', { id, status: novoStatus }).then(() => {
+    if (btn) { setLoading(btn, false); flashBtn(btn, 'success'); }
+  });
+  mostrarToast('✅ Status: ' + novoStatus);
+}
+
+  async function excluirPedido(id, event) {
+  const btn = event ? event.currentTarget : null;
+  const p = pedidos.find(x => String(x.id) === String(id));
+  if (!p) return;
+  if (!confirm(`Excluir pedido de "${p.cliente?.nome || 'cliente'}"?`)) return;
+  
+  if (btn) setLoading(btn, true);
+  pedidos = pedidos.filter(x => String(x.id) !== String(id));
+  localStorage.setItem('pedidos_cache', JSON.stringify(pedidos));
+  renderizarPedidos();
+  renderizarDashboard();
+  renderizarClientes();
+  
+  chamarAPI('excluirPedido', { id }).then(() => {
+    if (btn) setLoading(btn, false);
+  });
+  mostrarToast('🗑️ Pedido excluído!');
+}
+
+  // ============================================================
+  // PDF
+  // ============================================================
+  function imprimirPDFPedido(id) {
+    const p = pedidos.find(x => String(x.id) === String(id));
+    if (!p) return;
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFillColor(39, 174, 96);
+    doc.rect(0, 0, 210, 28, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Sabôr da Fruta', 105, 12, { align: 'center' });
+    doc.setFontSize(10);
+    doc.text('Comprovante de Pedido', 105, 20, { align: 'center' });
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Pedido: ${p.numero || p.id}`, 14, 40);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Data: ${new Date(p.data).toLocaleString('pt-BR')}`, 14, 47);
+    doc.setFont('helvetica', 'bold');
+    doc.text('DADOS DO CLIENTE', 14, 60);
+    doc.setLineWidth(0.5);
+    doc.line(14, 62, 196, 62);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Nome: ${p.cliente?.nome || '-'}`, 14, 69);
+    doc.text(`Endereço: ${p.cliente?.endereco || '-'}`, 14, 76);
+    if (p.cliente?.obs) doc.text(`Observações: ${p.cliente.obs}`, 14, 83);
+    const itensBody = (p.itens || []).map(i => [i.nome, `${i.quantidade}x`, `R$ ${(parseFloat(i.preco) || 0).toFixed(2).replace('.', ',')}`, `R$ ${((parseFloat(i.preco) || 0) * (i.quantidade || 0)).toFixed(2).replace('.', ',')}`]);
+    doc.autoTable({ startY: 92, head: [['Produto', 'Qtd', 'Preço', 'Subtotal']], body: itensBody, headStyles: { fillColor: [39, 174, 96], textColor: 255, fontStyle: 'bold' }, alternateRowStyles: { fillColor: [240, 240, 240] }, styles: { fontSize: 10, cellPadding: 3 } });
+    const y = doc.lastAutoTable.finalY + 10;
+    doc.setFillColor(39, 174, 96);
+    doc.rect(130, y - 5, 66, 12, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.text(`TOTAL: R$ ${(parseFloat(p.total) || 0).toFixed(2).replace('.', ',')}`, 163, y + 3, { align: 'center' });
+    doc.setTextColor(150, 150, 150);
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(9);
+    doc.text('Obrigado pela preferência! 🍇', 105, 285, { align: 'center' });
+    doc.save(`pedido_${p.numero || p.id}_${p.cliente?.nome || 'cliente'}.pdf`);
+  }
+
+  function gerarPDFPedidos() {
+    if (pedidos.length === 0) { mostrarToast('Nenhum pedido para gerar PDF!', 'warning'); return; }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('l');
+    doc.setFillColor(39, 174, 96);
+    doc.rect(0, 0, 297, 22, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Sabôr da Fruta - Relatório de Pedidos', 148, 14, { align: 'center' });
+    const filtro = document.getElementById('filtroStatusPedido')?.value || 'todos';
+    let lista = [...pedidos];
+    if (filtro !== 'todos') lista = lista.filter(p => p.status === filtro);
+    doc.autoTable({
+      startY: 28,
+      head: [['Nº', 'Data', 'Cliente', 'Endereço', 'Total', 'Status']],
+      body: lista.map(p => [p.numero || p.id, new Date(p.data).toLocaleDateString('pt-BR'), p.cliente?.nome || '-', p.cliente?.endereco || '-', `R$ ${(parseFloat(p.total) || 0).toFixed(2).replace('.', ',')}`, p.status]),
+      headStyles: { fillColor: [39, 174, 96] },
+      alternateRowStyles: { fillColor: [240, 240, 240] },
+      styles: { fontSize: 9 }
+    });
+    doc.save(`relatorio_pedidos_${new Date().toISOString().split('T')[0]}.pdf`);
+    mostrarToast('📄 PDF gerado!');
+  }
+
+  // ============================================================
+  // PRODUTOS
+  // ============================================================
+  function renderizarProdutosAdmin() {
+    const grid = document.getElementById('adminProdutosGrid');
+    if (produtos.length === 0) {
+      grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--slate-500);padding:30px;">Nenhum produto cadastrado</p>';
+      return;
+    }
+    const statusLabels = { ativo: '🟢 Ativo', esgotado: '🔴 Esgotado', em_falta: '🟡 Em Falta', oculto: '⚫ Oculto' };
+    grid.innerHTML = produtos.map(p => {
+      const status = p.status || 'ativo';
+      const estoque = parseInt(p.estoque) || 0;
+      const semEstoque = estoque <= 0;
+      const classesExtras = semEstoque ? 'sem-estoque' : '';
+      const estoqueTexto = semEstoque
+        ? `<span class="estoque-zerado">⚠️ Estoque Zerado</span>`
+        : `📦 Estoque: <strong>${estoque}</strong> un.`;
+      
+      return `
+      <div class="admin-product-card is-${status} ${classesExtras}" data-id="${p.id}">
+        ${p.imagem ? `<img src="${p.imagem}" onerror="this.style.display='none'">` : '<div style="height:110px;display:flex;align-items:center;justify-content:center;font-size:44px;">🧃</div>'}
+        <div class="name">${p.nome}</div>
+        <div class="cat">${p.categoria || 'Sem categoria'}</div>
+        <div class="price">R$ ${(parseFloat(p.preco) || 0).toFixed(2).replace('.', ',')}</div>
+        <div class="estoque-info">${estoqueTexto}</div>
+        <div class="status-badge status-${status}">${statusLabels[status] || '🟢 Ativo'}</div>
+        <div class="quick-actions">
+          <button class="qa-repor" onclick="reporEstoque('${p.id}', event)"><i class="fas fa-plus"></i> Repor</button>
+          <button class="qa-editar" onclick="editarProdutoAdmin('${p.id}', event)"><i class="fas fa-edit"></i> Editar</button>
+          <button class="qa-ativo" onclick="mudarStatusProduto('${p.id}', 'ativo', event)"><i class="fas fa-check-circle"></i> Ativo</button>
+          <button class="qa-esgotado" onclick="mudarStatusProduto('${p.id}', 'esgotado', event)"><i class="fas fa-ban"></i> Esgotado</button>
+          <button class="qa-em_falta" onclick="mudarStatusProduto('${p.id}', 'em_falta', event)"><i class="fas fa-exclamation-triangle"></i> Em Falta</button>
+          <button class="qa-oculto" onclick="mudarStatusProduto('${p.id}', 'oculto', event)"><i class="fas fa-eye-slash"></i> Oculto</button>
+        </div>
+        <button onclick="excluirProdutoAdmin('${p.id}', event)" style="background:var(--vermelho-bg);color:var(--vermelho);width:100%;margin-top:6px;padding:8px;border:none;border-radius:8px;font-weight:700;font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:4px;">
+          <i class="fas fa-trash"></i> Excluir produto
+        </button>
+      </div>
+      `;
+    }).join('');
+  }
+
+  async function mudarStatusProduto(id, novoStatus, event) {
+  const p = produtos.find(x => String(x.id) === String(id));
+  if (!p) return;
+  const btn = event ? event.currentTarget : null;
+  if (btn) setLoading(btn, true);
+  
+  // Atualiza UI IMEDIATAMENTE
+  p.status = novoStatus;
+  if (novoStatus === 'esgotado') p.estoque = 0;
+  renderizarProdutosAdmin();
+  localStorage.setItem('produtos_cache', JSON.stringify(produtos));
+  
+  // Sincroniza em background (sem await)
+  chamarAPI('salvarProduto', { produto: p }).then(r => {
+    if (r.success) {
+      if (btn) { setLoading(btn, false); flashBtn(btn, 'success'); }
+    } else {
+      if (btn) { setLoading(btn, false); flashBtn(btn, 'error'); }
+      mostrarToast('⚠️ Erro ao sincronizar', 'warning');
+    }
+  });
+  
+  mostrarToast(`✅ ${p.nome}: ${novoStatus}`);
+}
+
+
+  async function reporEstoque(id, event) {
+  const p = produtos.find(x => String(x.id) === String(id));
+  if (!p) return;
+  const btn = event ? event.currentTarget : null;
+  
+  const qtd = prompt(`➕ REPOR ESTOQUE\n\nProduto: ${p.nome}\nEstoque atual: ${p.estoque || 0} un.\n\nQuanto chegou?`, '0');
+  if (qtd === null) return;
+  const quantidade = parseInt(qtd);
+  if (isNaN(quantidade) || quantidade <= 0) {
+    flashBtn(btn, 'error');
+    mostrarToast('❌ Digite um número válido!', 'error');
+    return;
+  }
+  
+  if (btn) setLoading(btn, true);
+  const estoqueAnterior = parseInt(p.estoque) || 0;
+  p.estoque = estoqueAnterior + quantidade;
+  if (p.status === 'esgotado' || p.status === 'em_falta') p.status = 'ativo';
+  
+  // UI imediata
+  renderizarProdutosAdmin();
+  localStorage.setItem('produtos_cache', JSON.stringify(produtos));
+  
+  // Sync em background
+  chamarAPI('salvarProduto', { produto: p }).then(r => {
+    if (btn) { setLoading(btn, false); }
+    if (r.success) {
+      mostrarToast(`✅ ${p.nome}: ${estoqueAnterior} → ${p.estoque} un.`);
+    } else {
+      mostrarToast('⚠️ Erro ao sincronizar', 'warning');
+    }
+  });
+}
+
+  function limparFormProduto() {
+    document.getElementById('editProdutoId').value = '';
+    document.getElementById('prodNome').value = '';
+    document.getElementById('prodCategoria').value = 'Polpas';
+    document.getElementById('prodPreco').value = '';
+    document.getElementById('prodEstoque').value = '';
+    document.getElementById('prodStatus').value = 'ativo';
+    document.getElementById('prodImagem').value = '';
+    document.getElementById('prodDestaque').checked = false;
+    document.getElementById('prodModoEntrada').checked = false;
+    document.getElementById('formProdutoTitulo').textContent = '➕ Cadastrar Produto';
+    atualizarModoEntrada();
+  }
+
+  function atualizarModoEntrada() {
+    const modoEntrada = document.getElementById('prodModoEntrada').checked;
+    const lbl = document.getElementById('lblEstoque');
+    const hint = document.getElementById('hintEstoque');
+    if (modoEntrada) {
+      lbl.innerHTML = '➕ Quantidade a Adicionar';
+      hint.innerHTML = '<span style="color:var(--verde-escuro);font-weight:700;">Somará ao estoque atual</span>';
+    } else {
+      lbl.innerHTML = 'Estoque';
+      hint.innerHTML = '';
+    }
+  }
+
+  async function salvarProduto(event) {
+  const btn = event ? event.currentTarget : null;
+  const id = document.getElementById('editProdutoId').value;
+  const nome = document.getElementById('prodNome').value.trim();
+  const categoria = document.getElementById('prodCategoria').value.trim() || 'Polpas';
+  const preco = parseFloat(document.getElementById('prodPreco').value) || 0;
+  const estoqueDigitado = parseInt(document.getElementById('prodEstoque').value) || 0;
+  const status = document.getElementById('prodStatus').value;
+  const imagem = document.getElementById('prodImagem').value.trim();
+  const destaque = document.getElementById('prodDestaque').checked;
+  const modoEntrada = document.getElementById('prodModoEntrada').checked;
+
+  if (!nome) { flashBtn(btn, 'error'); mostrarToast('❌ Digite o nome!', 'error'); return; }
+  if (preco <= 0) { flashBtn(btn, 'error'); mostrarToast('❌ Preço inválido!', 'error'); return; }
+
+  if (btn) setLoading(btn, true);
+  let produtoFinal;
+
+  if (modoEntrada && !id) {
+    const existente = produtos.find(p => String(p.nome).toLowerCase() === nome.toLowerCase());
+    if (existente) {
+      const estoqueAtual = parseInt(existente.estoque) || 0;
+      existente.estoque = estoqueAtual + estoqueDigitado;
+      existente.preco = preco;
+      existente.categoria = categoria;
+      if (imagem) existente.imagem = imagem;
+      existente.status = status;
+      existente.destaque = destaque;
+      produtoFinal = existente;
+    } else {
+      produtoFinal = { id: 'p_' + Date.now(), nome, categoria, preco, estoque: estoqueDigitado, status, imagem, destaque };
+      produtos.push(produtoFinal);
+    }
+  } else if (id) {
+    const p = produtos.find(x => String(x.id) === String(id));
+    if (p) {
+      p.nome = nome; p.categoria = categoria; p.preco = preco;
+      p.estoque = estoqueDigitado; p.status = status; p.imagem = imagem; p.destaque = destaque;
+      produtoFinal = p;
+    }
+  } else {
+    produtoFinal = { id: 'p_' + Date.now(), nome, categoria, preco, estoque: estoqueDigitado, status, imagem, destaque };
+    produtos.push(produtoFinal);
+  }
+
+  // UI imediata
+  localStorage.setItem('produtos_cache', JSON.stringify(produtos));
+  renderizarProdutosAdmin();
+  renderizarDashboard();
+  
+  chamarAPI('salvarProduto', { produto: produtoFinal }).then(r => {
+    if (btn) { setLoading(btn, false); flashBtn(btn, 'success'); }
+    if (!r.success) mostrarToast('⚠️ Erro ao salvar', 'warning');
+  });
+  
+  mostrarToast('✅ Produto salvo!');
+  limparFormProduto();
+}
+
+  function editarProdutoAdmin(id, event) {
+    const p = produtos.find(x => String(x.id) === String(id));
+    if (!p) return;
+    const btn = event ? event.currentTarget : null;
+    flashBtn(btn, 'success');
+    
+    document.getElementById('editProdutoId').value = p.id;
+    document.getElementById('prodNome').value = p.nome;
+    document.getElementById('prodCategoria').value = p.categoria || 'Polpas';
+    document.getElementById('prodPreco').value = p.preco;
+    document.getElementById('prodEstoque').value = p.estoque || 0;
+    document.getElementById('prodStatus').value = p.status || 'ativo';
+    document.getElementById('prodImagem').value = p.imagem || '';
+    document.getElementById('prodDestaque').checked = !!p.destaque;
+    document.getElementById('prodModoEntrada').checked = false;
+    document.getElementById('formProdutoTitulo').textContent = '✏️ Editar Produto';
+    atualizarModoEntrada();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+
+ async function excluirProdutoAdmin(id, event) {
+  const p = produtos.find(x => String(x.id) === String(id));
+  if (!p) return;
+  const btn = event ? event.currentTarget : null;
+  if (!confirm(`Excluir "${p.nome}"?`)) return;
+  
+  if (btn) setLoading(btn, true);
+  produtos = produtos.filter(x => String(x.id) !== String(id));
+  localStorage.setItem('produtos_cache', JSON.stringify(produtos));
+  renderizarProdutosAdmin();
+  renderizarDashboard();
+  
+  chamarAPI('excluirProduto', { id }).then(() => {
+    if (btn) setLoading(btn, false);
+  });
+  mostrarToast(`🗑️ "${p.nome}" excluído!`);
+}
+
+  // ============================================================
+  // CLIENTES
+  // ============================================================
+  function renderizarClientes() {
+    const mapa = {};
+    pedidos.forEach(p => {
+      const nome = p.cliente?.nome || 'Desconhecido';
+      const end = p.cliente?.endereco || '-';
+      if (!mapa[nome]) mapa[nome] = { nome, endereco: end, pedidos: 0, total: 0 };
+      mapa[nome].pedidos++;
+      mapa[nome].total += parseFloat(p.total) || 0;
+      if (end !== '-') mapa[nome].endereco = end;
+    });
+    const lista = Object.values(mapa).sort((a, b) => b.total - a.total);
+    const tbody = document.getElementById('tabelaClientes');
+    if (lista.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--slate-400);padding:20px;">Nenhum cliente</td></tr>';
+      return;
+    }
+    tbody.innerHTML = lista.map(c => `
       <tr>
-        <td><strong>${p.numero || '#' + p.id}</strong></td>
-        <td>${p.cliente?.nome || '-'}</td>
-        <td><strong>R$ ${(parseFloat(p.total) || 0).toFixed(2).replace('.', ',')}</strong></td>
-        <td><span class="badge-status ${p.status}">${p.status}</span></td>
-        <td>${new Date(p.data).toLocaleDateString('pt-BR')}</td>
+        <td><strong>${c.nome}</strong></td>
+        <td>${c.endereco}</td>
+        <td>${c.pedidos}</td>
+        <td><strong>R$ ${c.total.toFixed(2).replace('.', ',')}</strong></td>
       </tr>
     `).join('');
-      }
+  }
+
+  // ============================================================
+  // CONFIG
+  // ============================================================
+  async function salvarConfig(event) {
+    const btn = event ? event.currentTarget : null;
+    if (btn) setLoading(btn, true);
+    
+    config = {
+      nome: document.getElementById('cfgNome').value,
+      whats: document.getElementById('cfgWhats').value,
+      endereco: document.getElementById('cfgEndereco').value,
+      heroTitulo: document.getElementById('cfgHeroTitulo').value,
+      msg: document.getElementById('cfgMsg').value,
+      cor: document.getElementById('cfgCor').value,
+      avisoAtivo: document.getElementById('cfgAvisoAtivo').value,
+      avisoTexto: document.getElementById('cfgAvisoTexto').value
+    };
+    localStorage.setItem('config_loja', JSON.stringify(config));
+    localStorage.setItem('config_loja_time', Date.now().toString());
+    await chamarAPI('salvarConfig', { config });
+    
+    if (btn) { setLoading(btn, false); flashBtn(btn, 'success'); }
+    mostrarToast('✅ Configurações salvas!');
+  }
+
+  async function salvarCredenciais(event) {
+    const btn = event ? event.currentTarget : null;
+    const userAtual = localStorage.getItem('admin_user') || 'admin';
+    const passAtual = prompt('🔐 Digite sua SENHA ATUAL para confirmar:');
+    
+    if (passAtual === null) return;
+    if (!passAtual) { flashBtn(btn, 'error'); mostrarToast('❌ Senha atual obrigatória!', 'error'); return; }
+    
+    const novoUser = document.getElementById('cfgUser').value.trim();
+    const novaPass = document.getElementById('cfgPass').value.trim();
+    
+    if (!novoUser && !novaPass) {
+      flashBtn(btn, 'error'); mostrarToast('❌ Preencha algo para alterar!', 'error'); return;
     }
-
-    // ============================================================
-    // 🆕 PEDIDOS EM CARDS
-    // ============================================================
-    function renderizarPedidos() {
-      const filtro = document.getElementById('filtroStatusPedido')?.value || 'todos';
-      const busca = (document.getElementById('filtroBuscaPedido')?.value || '').toLowerCase();
-      let lista = pedidos.slice().reverse();
-      if (filtro !== 'todos') lista = lista.filter(p => p.status === filtro);
-      if (busca) lista = lista.filter(p => (p.cliente?.nome || '').toLowerCase().includes(busca));
-      
-      const container = document.getElementById('tabelaPedidos');
-      
-      if (lista.length === 0) {
-        container.innerHTML = '<p style="text-align:center;color:var(--slate-400);padding:40px;font-weight:600;">Nenhum pedido encontrado</p>';
-        return;
-      }
-      
-      const statusLabels = {
-        pendente: { label: '⏳ Pendente', classe: 'pendente' },
-        confirmado: { label: '✅ Confirmado', classe: 'confirmado' },
-        entregue: { label: '🚚 Entregue', classe: 'entregue' },
-        cancelado: { label: '❌ Cancelado', classe: 'cancelado' }
-      };
-      
-      container.innerHTML = lista.map(p => {
-        const statusInfo = statusLabels[p.status] || statusLabels.pendente;
-        const totalItens = (p.itens || []).reduce((s, i) => s + (i.quantidade || 0), 0);
-        const dataFmt = p.data ? new Date(p.data).toLocaleDateString('pt-BR') : '-';
-        const horaFmt = p.data ? new Date(p.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
-        
-        return `
-          <div class="pedido-card">
-            <div class="pedido-header">
-              <div class="pedido-numero">
-                <i class="fas fa-receipt"></i> ${p.numero || '#' + p.id}
-              </div>
-              <div class="pedido-status ${statusInfo.classe}">${statusInfo.label}</div>
-            </div>
-            
-            <div class="pedido-info">
-              <div class="pedido-linha">
-                <span class="pedido-lbl"><i class="fas fa-user"></i> Cliente</span>
-                <span class="pedido-val">${p.cliente?.nome || '-'}</span>
-              </div>
-              <div class="pedido-linha">
-                <span class="pedido-lbl"><i class="fas fa-map-marker-alt"></i> Endereço</span>
-                <span class="pedido-val">${p.cliente?.endereco || '-'}</span>
-              </div>
-              ${p.cliente?.obs ? `
-              <div class="pedido-linha">
-                <span class="pedido-lbl"><i class="fas fa-comment"></i> Obs</span>
-                <span class="pedido-val">${p.cliente.obs}</span>
-              </div>` : ''}
-              <div class="pedido-linha">
-                <span class="pedido-lbl"><i class="fas fa-calendar"></i> Data</span>
-                <span class="pedido-val">${dataFmt} às ${horaFmt}</span>
-              </div>
-              <div class="pedido-linha">
-                <span class="pedido-lbl"><i class="fas fa-box"></i> Itens</span>
-                <span class="pedido-val">${totalItens} ${totalItens === 1 ? 'item' : 'itens'}</span>
-              </div>
-            </div>
-            
-            <div class="pedido-total">
-              <span>Total</span>
-              <strong>R$ ${(parseFloat(p.total) || 0).toFixed(2).replace('.', ',')}</strong>
-            </div>
-            
-            <div class="pedido-acoes">
-              <button class="btn-primary" onclick="verPedido('${p.id}', event)">
-                <i class="fas fa-eye"></i> Ver
-              </button>
-              <button class="btn-warning" onclick="alterarStatus('${p.id}', 'confirmado', event)">
-                <i class="fas fa-check"></i> Confirmar
-              </button>
-              <button class="btn-success" onclick="alterarStatus('${p.id}', 'entregue', event)">
-                <i class="fas fa-truck"></i> Entregue
-              </button>
-              <button class="btn-info" onclick="imprimirPDFPedido('${p.id}')">
-                <i class="fas fa-file-pdf"></i> PDF
-              </button>
-              <button class="btn-danger" onclick="excluirPedido('${p.id}', event)">
-                <i class="fas fa-trash"></i>
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
+    if (novaPass && novaPass.length < 6) {
+      flashBtn(btn, 'error'); mostrarToast('❌ A nova senha deve ter 6+ caracteres!', 'error'); return;
     }
-
-    function verPedido(id, event) {
-      const btn = event ? event.currentTarget : null;
-      const p = pedidos.find(x => String(x.id) === String(id));
-      if (!p) return;
-      const itensHtml = (p.itens || []).map(i => `
-    <tr><td>${i.nome}</td><td>${i.quantidade}x</td><td>R$ ${(parseFloat(i.preco) || 0).toFixed(2).replace('.', ',')}</td><td><strong>R$ ${((i.preco || 0) * (i.quantidade || 0)).toFixed(2).replace('.', ',')}</strong></td></tr>
-  `).join('');
-      document.getElementById('detalhesPedidoContent').innerHTML = `
-    <div style="background:var(--slate-50); padding:14px; border-radius:10px; margin-bottom:14px;">
-      <div style="font-weight:900; font-size:16px; margin-bottom:6px;">${p.numero || '#' + p.id}</div>
-      <div style="font-size:13px; color:var(--slate-600);"><strong>Cliente:</strong> ${p.cliente?.nome || '-'}</div>
-      <div style="font-size:13px; color:var(--slate-600);"><strong>Endereço:</strong> ${p.cliente?.endereco || '-'}</div>
-      ${p.cliente?.obs ? `<div style="font-size:13px; color:var(--slate-600);"><strong>Obs:</strong> ${p.cliente.obs}</div>` : ''}
-      <div style="font-size:13px; color:var(--slate-600); margin-top:6px;"><strong>Data:</strong> ${new Date(p.data).toLocaleString('pt-BR')}</div>
-      <div style="margin-top:8px;"><span class="badge-status ${p.status}">${p.status}</span></div>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Produto</th><th>Qtd</th><th>Preço</th><th>Subtotal</th></tr></thead>
-        <tbody>${itensHtml}</tbody>
-        <tfoot><tr style="background:var(--verde-bg);"><td colspan="3" style="text-align:right; font-weight:800;">TOTAL:</td><td style="font-weight:900; color:var(--verde-escuro); font-size:15px;">R$ ${(parseFloat(p.total) || 0).toFixed(2).replace('.', ',')}</td></tr></tfoot>
-      </table>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-info" onclick="imprimirPDFPedido('${p.id}')"><i class="fas fa-file-pdf"></i> PDF</button>
-      <button class="btn-primary" onclick="window.open('https://wa.me/${config.whats || WHATSAPP_LOJA_PADRAO}?text=' + encodeURIComponent('Olá ${p.cliente?.nome || ''}! Sobre seu pedido ${p.numero || ''}...'), '_blank')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
-      <button class="btn-clean" onclick="fecharModalPedido()">Fechar</button>
-    </div>
-  `;
-      document.getElementById('modalPedido').classList.add('show');
-      if (btn) flashBtn(btn, 'success');
-    }
-
-    function fecharModalPedido() { document.getElementById('modalPedido').classList.remove('show'); }
-
-    async function alterarStatus(id, novoStatus, event) {
-      const btn = event ? event.currentTarget : null;
-      const p = pedidos.find(x => String(x.id) === String(id));
-      if (!p) return;
+    
+    if (btn) setLoading(btn, true);
+    try {
+      const r = await chamarAPI('alterarCredenciais', {
+        userAtual,
+        passAtual,
+        novoUser: novoUser || '',
+        novaPass: novaPass || ''
+      });
       
-      if (btn) setLoading(btn, true);
-      showProgress(true);
-      
-      p.status = novoStatus;
-      await chamarAPI('atualizarStatusPedido', { id, status: novoStatus });
-      localStorage.setItem('pedidos_cache', JSON.stringify(pedidos));
-      renderizarPedidos();
-      renderizarDashboard();
-      
-      showProgress(false);
-      if (btn) {
-        setLoading(btn, false);
+      if (r.success) {
+        if (novoUser) localStorage.setItem('admin_user', novoUser);
+        document.getElementById('userLogado').textContent = novoUser || userAtual;
+        document.getElementById('cfgPass').value = '';
         flashBtn(btn, 'success');
+        mostrarToast('✅ Credenciais atualizadas!');
+      } else {
+        flashBtn(btn, 'error');
+        mostrarToast('❌ ' + r.message, 'error');
       }
-      mostrarToast('✅ Status alterado para: ' + novoStatus);
-    }
-
-    async function excluirPedido(id, event) {
-      const btn = event ? event.currentTarget : null;
-      const p = pedidos.find(x => String(x.id) === String(id));
-      if (!p) return;
-      if (!confirm(`Excluir pedido de "${p.cliente?.nome || 'cliente'}"?`)) return;
-      
-      if (btn) setLoading(btn, true);
-      showProgress(true);
-      setBodyProcessing(true);
-      
-      pedidos = pedidos.filter(x => String(x.id) !== String(id));
-      await chamarAPI('excluirPedido', { id });
-      localStorage.setItem('pedidos_cache', JSON.stringify(pedidos));
-      renderizarPedidos();
-      renderizarDashboard();
-      renderizarClientes();
-      
-      showProgress(false);
-      setBodyProcessing(false);
+    } finally {
       if (btn) setLoading(btn, false);
-      mostrarToast('🗑️ Pedido excluído!');
     }
+  }
 
-    // ============================================================
-    // PDF
-    // ============================================================
-    function imprimirPDFPedido(id) {
-      const p = pedidos.find(x => String(x.id) === String(id));
-      if (!p) return;
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.setFillColor(39, 174, 96);
-      doc.rect(0, 0, 210, 28, 'F');
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(16);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Sabôr da Fruta', 105, 12, { align: 'center' });
-      doc.setFontSize(10);
-      doc.text('Comprovante de Pedido', 105, 20, { align: 'center' });
-      doc.setTextColor(0, 0, 0);
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`Pedido: ${p.numero || p.id}`, 14, 40);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Data: ${new Date(p.data).toLocaleString('pt-BR')}`, 14, 47);
-      doc.setFont('helvetica', 'bold');
-      doc.text('DADOS DO CLIENTE', 14, 60);
-      doc.setLineWidth(0.5);
-      doc.line(14, 62, 196, 62);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Nome: ${p.cliente?.nome || '-'}`, 14, 69);
-      doc.text(`Endereço: ${p.cliente?.endereco || '-'}`, 14, 76);
-      if (p.cliente?.obs) doc.text(`Observações: ${p.cliente.obs}`, 14, 83);
-      const itensBody = (p.itens || []).map(i => [i.nome, `${i.quantidade}x`, `R$ ${(parseFloat(i.preco) || 0).toFixed(2).replace('.', ',')}`, `R$ ${((parseFloat(i.preco) || 0) * (i.quantidade || 0)).toFixed(2).replace('.', ',')}`]);
-      doc.autoTable({ startY: 92, head: [['Produto', 'Qtd', 'Preço', 'Subtotal']], body: itensBody, headStyles: { fillColor: [39, 174, 96], textColor: 255, fontStyle: 'bold' }, alternateRowStyles: { fillColor: [240, 240, 240] }, styles: { fontSize: 10, cellPadding: 3 } });
-      const y = doc.lastAutoTable.finalY + 10;
-      doc.setFillColor(39, 174, 96);
-      doc.rect(130, y - 5, 66, 12, 'F');
-      doc.setTextColor(255, 255, 255);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(13);
-      doc.text(`TOTAL: R$ ${(parseFloat(p.total) || 0).toFixed(2).replace('.', ',')}`, 163, y + 3, { align: 'center' });
-      doc.setTextColor(150, 150, 150);
-      doc.setFont('helvetica', 'italic');
-      doc.setFontSize(9);
-      doc.text('Obrigado pela preferência! 🍇', 105, 285, { align: 'center' });
-      doc.text(`WhatsApp: ${config.whats || WHATSAPP_LOJA_PADRAO}`, 105, 290, { align: 'center' });
-      doc.save(`pedido_${p.numero || p.id}_${p.cliente?.nome || 'cliente'}.pdf`);
-    }
+  function salvarSessao(event) {
+    const btn = event ? event.currentTarget : null;
+    const min = parseInt(document.getElementById('cfgSessao').value) || 60;
+    if (min < 5) { flashBtn(btn, 'error'); mostrarToast('❌ Mínimo 5 minutos', 'error'); return; }
+    localStorage.setItem('admin_sessao_min', min);
+    localStorage.setItem('admin_login_time', Date.now().toString());
+    iniciarSessao();
+    flashBtn(btn, 'success');
+    mostrarToast('✅ Sessão: ' + min + ' min');
+  }
 
-    function gerarPDFPedidos() {
-      if (pedidos.length === 0) { mostrarToast('Nenhum pedido para gerar PDF!', 'warning'); return; }
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF('l');
-      doc.setFillColor(39, 174, 96);
-      doc.rect(0, 0, 297, 22, 'F');
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(14);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Sabôr da Fruta - Relatório de Pedidos', 148, 14, { align: 'center' });
-      const filtro = document.getElementById('filtroStatusPedido')?.value || 'todos';
-      let lista = [...pedidos];
-      if (filtro !== 'todos') lista = lista.filter(p => p.status === filtro);
-      doc.autoTable({
-        startY: 28,
-        head: [['Nº', 'Data', 'Cliente', 'Endereço', 'Total', 'Status']],
-        body: lista.map(p => [p.numero || p.id, new Date(p.data).toLocaleDateString('pt-BR'), p.cliente?.nome || '-', p.cliente?.endereco || '-', `R$ ${(parseFloat(p.total) || 0).toFixed(2).replace('.', ',')}`, p.status]),
-        headStyles: { fillColor: [39, 174, 96] },
-        alternateRowStyles: { fillColor: [240, 240, 240] },
-        styles: { fontSize: 9 }
-      });
-      doc.save(`relatorio_pedidos_${new Date().toISOString().split('T')[0]}.pdf`);
-      mostrarToast('📄 PDF gerado!');
-    }
-
-    // ============================================================
-    // PRODUTOS
-    // ============================================================
-    function renderizarProdutosAdmin() {
-      const grid = document.getElementById('adminProdutosGrid');
-      if (produtos.length === 0) {
-        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--slate-500);padding:30px;">Nenhum produto cadastrado</p>';
-        return;
-      }
-      const statusLabels = { ativo: '🟢 Ativo', esgotado: '🔴 Esgotado', em_falta: '🟡 Em Falta', oculto: '⚫ Oculto' };
-      grid.innerHTML = produtos.map(p => {
-        const status = p.status || 'ativo';
-        const estoque = parseInt(p.estoque) || 0;
-        const semEstoque = estoque <= 0;
-        const classesExtras = semEstoque ? 'sem-estoque' : '';
-        const estoqueTexto = semEstoque
-          ? `<span class="estoque-zerado">⚠️ Estoque Zerado</span>`
-          : `📦 Estoque: <strong>${estoque}</strong> un.`;
-        
-        return `
-        <div class="admin-product-card is-${status} ${classesExtras}" data-id="${p.id}">
-          ${p.imagem ? `<img src="${p.imagem}" onerror="this.style.display='none'">` : '<div style="height:110px;display:flex;align-items:center;justify-content:center;font-size:44px;">🧃</div>'}
-          <div class="name">${p.nome}</div>
-          <div class="cat">${p.categoria || 'Sem categoria'}</div>
-          <div class="price">R$ ${(parseFloat(p.preco) || 0).toFixed(2).replace('.', ',')}</div>
-          <div class="estoque-info">${estoqueTexto}</div>
-          <div class="status-badge status-${status}">${statusLabels[status] || '🟢 Ativo'}</div>
-
-          <div class="quick-actions">
-            <button class="qa-repor" onclick="reporEstoque('${p.id}', event)" title="Adicionar estoque">
-              <i class="fas fa-plus"></i> Repor
-            </button>
-            <button class="qa-editar" onclick="editarProdutoAdmin('${p.id}', event)" title="Editar">
-              <i class="fas fa-edit"></i> Editar
-            </button>
-            <button class="qa-ativo" onclick="mudarStatusProduto('${p.id}', 'ativo', event)" title="Marcar como Ativo">
-              <i class="fas fa-check-circle"></i> Ativo
-            </button>
-            <button class="qa-esgotado" onclick="mudarStatusProduto('${p.id}', 'esgotado', event)" title="Marcar como Esgotado">
-              <i class="fas fa-ban"></i> Esgotado
-            </button>
-            <button class="qa-em_falta" onclick="mudarStatusProduto('${p.id}', 'em_falta', event)" title="Marcar como Em Falta">
-              <i class="fas fa-exclamation-triangle"></i> Em Falta
-            </button>
-            <button class="qa-oculto" onclick="mudarStatusProduto('${p.id}', 'oculto', event)" title="Ocultar do catálogo">
-              <i class="fas fa-eye-slash"></i> Oculto
-            </button>
-          </div>
-          <button onclick="excluirProdutoAdmin('${p.id}', event)" style="background:var(--vermelho-bg);color:var(--vermelho);width:100%;margin-top:6px;padding:8px;border:none;border-radius:8px;font-weight:700;font-size:10px;cursor:pointer;transition:all 0.25s;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:4px;position:relative;overflow:hidden;">
-            <i class="fas fa-trash"></i> Excluir produto
-          </button>
-        </div>
-        `;
-      }).join('');
-    }
-
-    async function mudarStatusProduto(id, novoStatus, event) {
-      const p = produtos.find(x => String(x.id) === String(id));
-      if (!p) return;
-      
-      const btn = event ? event.currentTarget : null;
-      const card = document.querySelector(`.admin-product-card[data-id="${id}"]`);
-      
-      if (card) {
-        card.classList.add('clicked');
-        setTimeout(() => card.classList.remove('clicked'), 400);
-      }
-      setLoading(btn, true);
-      animarBadge(id);
-      
-      const labels = { ativo: '🟢 Ativo', esgotado: '🔴 Esgotado', em_falta: '🟡 Em Falta', oculto: '⚫ Oculto' };
-      
-      p.status = novoStatus;
-      if (novoStatus === 'esgotado') p.estoque = 0;
-      
-      await new Promise(r => setTimeout(r, 400));
-      renderizarProdutosAdmin();
-      
-      const r = await chamarAPI('salvarProduto', { produto: p });
-      
-      if (r.success) {
-        mostrarToast(`✅ ${p.nome}: ${labels[novoStatus]}`);
-      } else {
-        flashBtn(btn, 'error');
-        mostrarToast('⚠️ Erro ao sincronizar', 'warning');
-      }
-    }
-
-    async function reporEstoque(id, event) {
-      const p = produtos.find(x => String(x.id) === String(id));
-      if (!p) return;
-      
-      const btn = event ? event.currentTarget : null;
-      const card = document.querySelector(`.admin-product-card[data-id="${id}"]`);
-      
-      const qtd = prompt(
-        `➕ REPOR ESTOQUE\n\n` +
-        `Produto: ${p.nome}\n` +
-        `Estoque atual: ${p.estoque || 0} un.\n\n` +
-        `Quanto chegou?`,
-        '0'
-      );
-      
-      if (qtd === null) return;
-      const quantidade = parseInt(qtd);
-      if (isNaN(quantidade) || quantidade <= 0) {
-        flashBtn(btn, 'error');
-        mostrarToast('❌ Digite um número válido!', 'error');
-        return;
-      }
-      
-      if (card) {
-        card.classList.add('clicked');
-        setTimeout(() => card.classList.remove('clicked'), 400);
-      }
-      setLoading(btn, true);
-      setCardProcessing(id, true);
-      showProgress(true);
-      setBodyProcessing(true);
-      
-      const estoqueAnterior = parseInt(p.estoque) || 0;
-      p.estoque = estoqueAnterior + quantidade;
-      
-      if (p.status === 'esgotado' || p.status === 'em_falta') {
-        p.status = 'ativo';
-      }
-      
-      await new Promise(r => setTimeout(r, 500));
-      localStorage.setItem('produtos_cache', JSON.stringify(produtos));
-      
-      const r = await chamarAPI('salvarProduto', { produto: p });
-      
-      setCardProcessing(id, false);
-      setLoading(btn, false);
-      showProgress(false);
-      setBodyProcessing(false);
-      renderizarProdutosAdmin();
-      
-      if (r.success) {
-        mostrarToast(`✅ ${p.nome}: ${estoqueAnterior} → ${p.estoque} un.`);
-      } else {
-        mostrarToast('⚠️ Erro ao sincronizar', 'warning');
-      }
-    }
-
-    function limparFormProduto() {
-      document.getElementById('editProdutoId').value = '';
-      document.getElementById('prodNome').value = '';
-      document.getElementById('prodCategoria').value = 'Polpas';
-      document.getElementById('prodPreco').value = '';
-      document.getElementById('prodEstoque').value = '';
-      document.getElementById('prodStatus').value = 'ativo';
-      document.getElementById('prodImagem').value = '';
-      document.getElementById('prodDestaque').checked = false;
-      document.getElementById('prodModoEntrada').checked = false;
-      document.getElementById('formProdutoTitulo').textContent = '➕ Cadastrar Produto';
-      atualizarModoEntrada();
-    }
-
-    function atualizarModoEntrada() {
-      const modoEntrada = document.getElementById('prodModoEntrada').checked;
-      const lbl = document.getElementById('lblEstoque');
-      const hint = document.getElementById('hintEstoque');
-      if (modoEntrada) {
-        lbl.innerHTML = '➕ Quantidade a Adicionar';
-        hint.innerHTML = '<span style="color:var(--verde-escuro);font-weight:700;">Somará ao estoque atual</span>';
-        document.getElementById('prodEstoque').placeholder = 'Ex: 10';
-      } else {
-        lbl.innerHTML = 'Estoque';
-        hint.innerHTML = '';
-        document.getElementById('prodEstoque').placeholder = '0';
-      }
-    }
-
-    async function salvarProduto(event) {
-      const btn = event ? event.currentTarget : document.querySelector('#page-produtos .form-card .btn-primary');
-      const id = document.getElementById('editProdutoId').value;
-      const nome = document.getElementById('prodNome').value.trim();
-      const categoria = document.getElementById('prodCategoria').value.trim() || 'Polpas';
-      const preco = parseFloat(document.getElementById('prodPreco').value) || 0;
-      const estoqueDigitado = parseInt(document.getElementById('prodEstoque').value) || 0;
-      const status = document.getElementById('prodStatus').value;
-      const imagem = document.getElementById('prodImagem').value.trim();
-      const destaque = document.getElementById('prodDestaque').checked;
-      const modoEntrada = document.getElementById('prodModoEntrada').checked;
-
-      if (!nome) { flashBtn(btn, 'error'); mostrarToast('❌ Digite o nome do produto!', 'error'); return; }
-      if (preco <= 0) { flashBtn(btn, 'error'); mostrarToast('❌ Digite um preço válido!', 'error'); return; }
-
-      setLoading(btn, true);
-      setBodyProcessing(true);
-      showProgress(true);
-
-      let produtoFinal;
-
-      if (modoEntrada && !id) {
-        const existente = produtos.find(p => String(p.nome).toLowerCase() === nome.toLowerCase());
-        if (existente) {
-          const estoqueAtual = parseInt(existente.estoque) || 0;
-          const novoEstoque = estoqueAtual + estoqueDigitado;
-          
-          setLoading(btn, false);
-          setBodyProcessing(false);
-          showProgress(false);
-          
-          if (!confirm(
-            `📦 *MODO ENTRADA*\n\n` +
-            `Produto: ${existente.nome}\n` +
-            `Estoque atual: ${estoqueAtual}\n` +
-            `Adicionando: +${estoqueDigitado}\n` +
-            `━━━━━━━━━━━━━━\n` +
-            `Novo estoque: ${novoEstoque}\n\n` +
-            `Confirmar?`
-          )) return;
-          
-          setLoading(btn, true);
-          setBodyProcessing(true);
-          showProgress(true);
-          
-          existente.estoque = novoEstoque;
-          existente.preco = preco;
-          existente.categoria = categoria;
-          if (imagem) existente.imagem = imagem;
-          existente.status = status;
-          existente.destaque = destaque;
-          
-          produtoFinal = existente;
-          localStorage.setItem('produtos_cache', JSON.stringify(produtos));
-          const r = await chamarAPI('salvarProduto', { produto: produtoFinal });
-          
-          setLoading(btn, false);
-          setBodyProcessing(false);
-          showProgress(false);
-          
-          if (r.success) {
-            flashBtn(btn, 'success');
-            mostrarToast(`✅ ${existente.nome}: ${estoqueAtual} → ${novoEstoque}`);
-          } else {
-            flashBtn(btn, 'error');
-            mostrarToast('⚠️ Erro ao sincronizar', 'warning');
-          }
-          
-          limparFormProduto();
-          renderizarProdutosAdmin();
-          renderizarDashboard();
-          return;
-        } else {
-          setLoading(btn, false);
-          setBodyProcessing(false);
-          showProgress(false);
-          if (!confirm(`Produto "${nome}" não encontrado. Deseja cadastrar como novo?`)) return;
-          setLoading(btn, true);
-          setBodyProcessing(true);
-          showProgress(true);
-        }
-      }
-
-      if (id) {
-        const p = produtos.find(x => String(x.id) === String(id));
-        if (p) {
-          p.nome = nome; p.categoria = categoria; p.preco = preco;
-          p.estoque = estoqueDigitado; p.status = status; p.imagem = imagem; p.destaque = destaque;
-          produtoFinal = p;
-        }
-      } else {
-        produtoFinal = { id: 'p_' + Date.now(), nome, categoria, preco, estoque: estoqueDigitado, status, imagem, destaque };
-        produtos.push(produtoFinal);
-      }
-
-      localStorage.setItem('produtos_cache', JSON.stringify(produtos));
-      const r = await chamarAPI('salvarProduto', { produto: produtoFinal });
-      
-      setLoading(btn, false);
-      setBodyProcessing(false);
-      showProgress(false);
-      
-      if (r.success) {
-        flashBtn(btn, 'success');
-        mostrarToast('✅ Produto salvo!');
-      } else {
-        flashBtn(btn, 'error');
-        mostrarToast('⚠️ Erro ao salvar no Sheets', 'warning');
-      }
-
-      limparFormProduto();
-      renderizarProdutosAdmin();
-      renderizarDashboard();
-    }
-
-    function editarProdutoAdmin(id, event) {
-      const p = produtos.find(x => String(x.id) === String(id));
-      if (!p) return;
-      
-      const btn = event ? event.currentTarget : null;
-      const card = document.querySelector(`.admin-product-card[data-id="${id}"]`);
-      
-      if (card) {
-        card.classList.add('clicked');
-        setTimeout(() => card.classList.remove('clicked'), 400);
-      }
-      flashBtn(btn, 'success');
-      
-      document.getElementById('editProdutoId').value = p.id;
-      document.getElementById('prodNome').value = p.nome;
-      document.getElementById('prodCategoria').value = p.categoria || 'Polpas';
-      document.getElementById('prodPreco').value = p.preco;
-      document.getElementById('prodEstoque').value = p.estoque || 0;
-      document.getElementById('prodStatus').value = p.status || 'ativo';
-      document.getElementById('prodImagem').value = p.imagem || '';
-      document.getElementById('prodDestaque').checked = !!p.destaque;
-      document.getElementById('prodModoEntrada').checked = false;
-      document.getElementById('formProdutoTitulo').textContent = '✏️ Editar Produto';
-      atualizarModoEntrada();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    async function excluirProdutoAdmin(id, event) {
-      const p = produtos.find(x => String(x.id) === String(id));
-      if (!p) return;
-      
-      const btn = event ? event.currentTarget : null;
-      const card = document.querySelector(`.admin-product-card[data-id="${id}"]`);
-      
-      if (!confirm(`Excluir "${p.nome}"?\n\nEsta ação é irreversível!`)) return;
-      
-      if (card) {
-        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-        card.style.opacity = '0';
-        card.style.transform = 'scale(0.85)';
-      }
-      setLoading(btn, true);
-      setBodyProcessing(true);
-      showProgress(true);
-      
-      await new Promise(r => setTimeout(r, 400));
-      
-      produtos = produtos.filter(x => String(x.id) !== String(id));
-      localStorage.setItem('produtos_cache', JSON.stringify(produtos));
-      await chamarAPI('excluirProduto', { id });
-      
-      setBodyProcessing(false);
-      showProgress(false);
-      renderizarProdutosAdmin();
-      renderizarDashboard();
-      mostrarToast(`🗑️ "${p.nome}" excluído!`);
-    }
-
-    // ============================================================
-    // CLIENTES
-    // ============================================================
-    function renderizarClientes() {
-      const mapa = {};
-      pedidos.forEach(p => {
-        const nome = p.cliente?.nome || 'Desconhecido';
-        const end = p.cliente?.endereco || '-';
-        if (!mapa[nome]) mapa[nome] = { nome, endereco: end, pedidos: 0, total: 0 };
-        mapa[nome].pedidos++;
-        mapa[nome].total += parseFloat(p.total) || 0;
-        if (end !== '-') mapa[nome].endereco = end;
-      });
-      const lista = Object.values(mapa).sort((a, b) => b.total - a.total);
-      const tbody = document.getElementById('tabelaClientes');
-      if (lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--slate-400);padding:20px;">Nenhum cliente</td></tr>';
-        return;
-      }
-      tbody.innerHTML = lista.map(c => `
-    <tr>
-      <td><strong>${c.nome}</strong></td>
-      <td>${c.endereco}</td>
-      <td>${c.pedidos}</td>
-      <td><strong>R$ ${c.total.toFixed(2).replace('.', ',')}</strong></td>
-    </tr>
-  `).join('');
-    }
-
-    // ============================================================
-    // CONFIG
-    // ============================================================
-    async function salvarConfig(event) {
-      const btn = event ? event.currentTarget : null;
-      if (btn) setLoading(btn, true);
-      showProgress(true);
-      
-      config = {
-        nome: document.getElementById('cfgNome').value,
-        whats: document.getElementById('cfgWhats').value,
-        endereco: document.getElementById('cfgEndereco').value,
-        heroTitulo: document.getElementById('cfgHeroTitulo').value,
-        msg: document.getElementById('cfgMsg').value,
-        cor: document.getElementById('cfgCor').value,
-        avisoAtivo: document.getElementById('cfgAvisoAtivo').value,
-        avisoTexto: document.getElementById('cfgAvisoTexto').value
-      };
-      localStorage.setItem('config_loja', JSON.stringify(config));
-      await chamarAPI('salvarConfig', { config });
-      
-      showProgress(false);
-      if (btn) {
-        setLoading(btn, false);
-        flashBtn(btn, 'success');
-      }
-      mostrarToast('✅ Configurações salvas!');
-    }
-
-    function salvarCredenciais(event) {
-      const btn = event ? event.currentTarget : null;
-      const user = document.getElementById('cfgUser').value.trim();
-      const pass = document.getElementById('cfgPass').value.trim();
-      if (!user) { flashBtn(btn, 'error'); mostrarToast('❌ Digite o usuário!', 'error'); return; }
-      if (pass && pass.length < 6) { flashBtn(btn, 'error'); mostrarToast('❌ A senha deve ter ao menos 6 caracteres!', 'error'); return; }
-      localStorage.setItem('admin_user', user);
-      if (pass) localStorage.setItem('admin_pass', pass);
-      document.getElementById('userLogado').textContent = user;
-      flashBtn(btn, 'success');
-      mostrarToast('✅ Credenciais atualizadas!');
-      document.getElementById('cfgPass').value = '';
-    }
-
-    function salvarSessao(event) {
-      const btn = event ? event.currentTarget : null;
-      const min = parseInt(document.getElementById('cfgSessao').value) || 60;
-      if (min < 5) { flashBtn(btn, 'error'); mostrarToast('❌ Mínimo 5 minutos', 'error'); return; }
-      localStorage.setItem('admin_sessao_min', min);
-      localStorage.setItem('admin_login_time', Date.now().toString());
+  // ============================================================
+  // INIT
+  // ============================================================
+  document.addEventListener('DOMContentLoaded', () => {
+    if (verificarSessaoAtiva()) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminLayout').classList.add('show');
+      document.getElementById('userLogado').textContent = localStorage.getItem('admin_user') || 'admin';
       iniciarSessao();
-      flashBtn(btn, 'success');
-      mostrarToast('✅ Sessão: ' + min + ' min');
+      carregarTudo();
+      atualizarStatusManutencao();
     }
+    document.getElementById('loginPass').addEventListener('keypress', e => { if (e.key === 'Enter') fazerLogin(); });
+    atualizarModoEntrada();
+  });
 
-    // ============================================================
-    // INIT
-    // ============================================================
-    document.addEventListener('DOMContentLoaded', () => {
-      if (verificarSessaoAtiva()) {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('adminLayout').classList.add('show');
-        document.getElementById('userLogado').textContent = localStorage.getItem('admin_user') || ADMIN_USER_PADRAO;
-        iniciarSessao();
-        carregarTudo();
-      }
-      document.getElementById('loginPass').addEventListener('keypress', e => { if (e.key === 'Enter') fazerLogin(); });
-      atualizarModoEntrada();
-    });
   </script>
 </body>
 
