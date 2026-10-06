@@ -6,8 +6,10 @@
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Sabôr da Fruta - Catálogo de Pedidos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -45,7 +47,7 @@
     .hero::before { content: ''; position: absolute; top: -50%; right: -20%; width: 300px; height: 300px; background: rgba(255, 255, 255, 0.08); border-radius: 50%; }
     .hero h1 { font-size: 22px; font-weight: 900; margin-bottom: 6px; position: relative; }
     .hero p { font-size: 13px; opacity: 0.9; font-weight: 500; position: relative; }
-    .hero .info-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.15); padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-top: 12px; position: relative; backdrop-filter: blur(8px); }
+    .hero .info-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.15); padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-top: 12px; position: relative; }
 
     .container { max-width: 1200px; margin: 0 auto; padding: 16px; }
     .category-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; overflow-x: auto; padding-bottom: 4px; }
@@ -76,7 +78,7 @@
     .badge-em_falta { background: var(--amarelo-escuro); color: var(--branco); }
 
     /* CARRINHO */
-    .cart-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55); z-index: 200; backdrop-filter: blur(5px); }
+    .cart-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55); z-index: 200; }
     .cart-overlay.show { display: block; }
     .cart-sidebar { position: fixed; top: 0; right: 0; width: 100%; max-width: 440px; height: 100vh; height: 100dvh; background: var(--branco); z-index: 201; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; box-shadow: -6px 0 24px rgba(0, 0, 0, 0.12); overflow: hidden; }
     .cart-sidebar.open { transform: translateX(0); }
@@ -115,7 +117,7 @@
     .btn-limpar:hover { background: var(--vermelho); color: var(--branco); }
 
     /* MODAL CLIENTE */
-    .modal-cliente { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 400; justify-content: center; align-items: flex-end; padding: 0; backdrop-filter: blur(5px); }
+    .modal-cliente { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 400; justify-content: center; align-items: flex-end; padding: 0; }
     .modal-cliente.show { display: flex; }
     .modal-cliente-box { background: var(--branco); border-radius: 18px 18px 0 0; padding: 0; width: 100%; max-width: 440px; max-height: 92vh; overflow-y: auto; animation: slideUpModal 0.32s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; }
     @keyframes slideUpModal { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -144,7 +146,7 @@
     .btn-voltar-carrinho { width: 100%; padding: 9px; background: none; border: none; color: var(--slate-500); font-size: 11px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 5px; }
 
     /* MODAL SUCESSO */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.50); z-index: 300; justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(4px); }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.50); z-index: 300; justify-content: center; align-items: center; padding: 16px; }
     .modal-overlay.show { display: flex; }
     .modal-box { background: var(--branco); border-radius: 12px; padding: 20px; max-width: 380px; width: 100%; animation: slideUp 0.25s ease; box-shadow: var(--sombra-lg); }
     @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -179,6 +181,15 @@
 </head>
 
 <body>
+
+  <!-- TELA DE MANUTENÇÃO -->
+<div id="telaManutencao" style="display:none; position:fixed; inset:0; z-index:9999; background:linear-gradient(135deg, #1e8449 0%, #27ae60 100%); color:#fff; align-items:center; justify-content:center; padding:24px; text-align:center; flex-direction:column;">
+  <div style="font-size:80px; margin-bottom:16px;">🚧</div>
+  <h1 style="font-size:26px; font-weight:900; margin-bottom:12px;">Estamos em Manutenção</h1>
+  <p id="manutMsgCliente" style="font-size:15px; opacity:0.95; max-width:400px; line-height:1.5; margin-bottom:24px;">Estamos fazendo algumas melhorias. Voltamos em breve!</p>
+  <div id="manutTimer" style="background:rgba(255,255,255,0.15); padding:10px 20px; border-radius:20px; font-weight:700; font-size:13px; backdrop-filter:blur(8px);"></div>
+  <p style="font-size:12px; opacity:0.75; margin-top:32px;">🍇 Sabôr da Fruta — Obrigado pela paciência!</p>
+</div>
 
   <div class="aviso-topo" id="avisoTopo"></div>
 
@@ -372,92 +383,157 @@
       }
     }
 
-    async function carregarTudo() {
-      const cfg = await chamarAPI('obterConfig');
-      if (cfg.success && cfg.config) config = cfg.config;
-      const cfgLocal = localStorage.getItem('config_loja');
-      if (cfgLocal) { try { config = { ...config, ...JSON.parse(cfgLocal) }; } catch (e) { } }
+   let manutTimerInterval = null;
 
-      if (config.nome) document.getElementById('logoNome').textContent = config.nome;
-      if (config.heroTitulo) document.getElementById('heroTitulo').textContent = config.heroTitulo;
-      if (config.msg) document.getElementById('heroMsg').textContent = config.msg;
-      if (config.endereco) {
-        const whats = String(config.whats || WHATSAPP_LOJA).replace(/\D/g, '');
-        const telFmt = formatarTelefone(whats);
-        document.getElementById('heroInfo').textContent = `📞 ${telFmt} • 📍 ${config.endereco}`;
-      }
-      if (config.avisoAtivo === 'sim' && config.avisoTexto) {
-        const av = document.getElementById('avisoTopo');
-        av.textContent = config.avisoTexto;
-        av.classList.add('show');
-      }
-      if (config.cor) {
-        document.documentElement.style.setProperty('--verde', config.cor);
-        const escurecer = (hex, perc) => {
-          const n = parseInt(hex.replace('#', ''), 16);
-          const r = Math.max(0, (n >> 16) - Math.round(2.55 * perc));
-          const g = Math.max(0, ((n >> 8) & 0x00FF) - Math.round(2.55 * perc));
-          const b = Math.max(0, (n & 0x0000FF) - Math.round(2.55 * perc));
-          return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
-        };
-        document.documentElement.style.setProperty('--verde-escuro', escurecer(config.cor, 15));
-        document.documentElement.style.setProperty('--verde-claro', escurecer(config.cor, -10));
-        const clarear = (hex, perc) => {
-          const n = parseInt(hex.replace('#', ''), 16);
-          const r = Math.min(255, (n >> 16) + Math.round(2.55 * perc));
-          const g = Math.min(255, ((n >> 8) & 0x00FF) + Math.round(2.55 * perc));
-          const b = Math.min(255, (n & 0x0000FF) + Math.round(2.55 * perc));
-          return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
-        };
-        document.documentElement.style.setProperty('--verde-bg', clarear(config.cor, 40));
-      }
-
-      const data = await chamarAPI('obterProdutosCatalogo');
-      if (data.success && data.produtos && data.produtos.length > 0) produtos = data.produtos;
-      else produtos = [...PRODUTOS_PADRAO];
-
-      // Ajusta o carrinho carregado do storage:
-      // - Atualiza preços e nomes conforme os produtos atuais
-      // - Remove itens de produtos que não existem mais
-      // - Respeita o estoque máximo
-      let alterou = false;
-      carrinho = carrinho.map(item => {
-        const p = produtos.find(x => String(x.id) === String(item.id));
-        if (!p) { alterou = true; return null; } // produto removido
-        const precoAtual = parseFloat(p.preco) || 0;
-        const estoque = parseInt(p.estoque) || 0;
-        const novaQtd = Math.min(item.quantidade, Math.max(1, estoque));
-        if (novaQtd !== item.quantidade || precoAtual !== item.preco || p.nome !== item.nome) {
-          alterou = true;
-        }
-        return {
-          id: p.id,
-          nome: p.nome,
-          preco: precoAtual,
-          imagem: p.imagem,
-          quantidade: Math.max(1, novaQtd)
-        };
-      }).filter(Boolean);
-
-      // Remove itens que ficaram sem estoque
-      carrinho = carrinho.filter(item => {
-        const p = produtos.find(x => String(x.id) === String(item.id));
-        if (!p) return false;
-        const estoque = parseInt(p.estoque) || 0;
-        const status = p.status || 'ativo';
-        if (status === 'esgotado' || status === 'em_falta' || estoque <= 0) {
-          alterou = true;
-          return false;
-        }
-        return true;
-      });
-
-      if (alterou) salvarCarrinhoNoStorage();
-
-      renderizarCategorias();
-      renderizarProdutos();
-      renderizarCarrinho();
+async function carregarTudo() {
+  // 1) Mostra instantaneamente o último catálogo salvo no aparelho
+  let usouCache = false;
+  try {
+    const c = JSON.parse(localStorage.getItem('catalogo_cache') || 'null');
+    if (c && c.produtos && c.produtos.length) {
+      aplicarCatalogo({ success: true, config: c.config, produtos: c.produtos, manutencao: { ativa: false } });
+      usouCache = true;
     }
+  } catch (e) {}
+
+  // 2) Uma única requisição (config + produtos + manutenção) e atualiza a tela
+  const data = await chamarAPI('obterCatalogo');
+  if (!data.success) { if (!usouCache) aplicarCatalogo({ success: false }); return; }
+  try { localStorage.setItem('catalogo_cache', JSON.stringify({ config: data.config, produtos: data.produtos })); } catch (e) {}
+  aplicarCatalogo(data);
+}
+
+function aplicarCatalogo(data) {
+  const configData = { success: !!data.success, config: data.config, manutencao: data.manutencao };
+  const prodData = { success: !!data.success, produtos: data.produtos };
+  
+  // Verifica manutenção
+  if (configData.success && configData.manutencao && configData.manutencao.ativa) {
+    mostrarTelaManutencao(configData.manutencao);
+    return;
+  }
+  
+  document.getElementById('telaManutencao').style.display = 'none';
+  if (manutTimerInterval) clearInterval(manutTimerInterval);
+  
+  if (configData.success && configData.config) config = configData.config;
+  
+  const cfgLocal = localStorage.getItem('config_loja');
+  if (cfgLocal && !configData.config) { try { config = JSON.parse(cfgLocal); } catch (e) { } }
+  
+  // Aplica configs
+  if (config.nome) document.getElementById('logoNome').textContent = config.nome;
+  if (config.heroTitulo) document.getElementById('heroTitulo').textContent = config.heroTitulo;
+  if (config.msg) document.getElementById('heroMsg').textContent = config.msg;
+  if (config.endereco) {
+    const whats = String(config.whats || WHATSAPP_LOJA).replace(/\D/g, '');
+    document.getElementById('heroInfo').textContent = `📞 ${formatarTelefone(whats)} • 📍 ${config.endereco}`;
+  }
+  if (config.avisoAtivo === 'sim' && config.avisoTexto) {
+    const av = document.getElementById('avisoTopo');
+    av.textContent = config.avisoTexto;
+    av.classList.add('show');
+  }
+  if (config.cor) {
+    document.documentElement.style.setProperty('--verde', config.cor);
+    const escurecer = (hex, perc) => {
+      const n = parseInt(hex.replace('#', ''), 16);
+      const r = Math.max(0, (n >> 16) - Math.round(2.55 * perc));
+      const g = Math.max(0, ((n >> 8) & 0x00FF) - Math.round(2.55 * perc));
+      const b = Math.max(0, (n & 0x0000FF) - Math.round(2.55 * perc));
+      return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+    };
+    document.documentElement.style.setProperty('--verde-escuro', escurecer(config.cor, 15));
+    document.documentElement.style.setProperty('--verde-claro', escurecer(config.cor, -10));
+  }
+
+  if (prodData.success && prodData.produtos && prodData.produtos.length > 0) {
+    produtos = prodData.produtos;
+  } else {
+    produtos = [...PRODUTOS_PADRAO];
+  }
+
+  // Valida carrinho
+  let alterou = false;
+  carrinho = carrinho.map(item => {
+    const p = produtos.find(x => String(x.id) === String(item.id));
+    if (!p) { alterou = true; return null; }
+    const precoAtual = parseFloat(p.preco) || 0;
+    const estoque = parseInt(p.estoque) || 0;
+    const novaQtd = Math.min(item.quantidade, Math.max(1, estoque));
+    if (novaQtd !== item.quantidade || precoAtual !== item.preco) alterou = true;
+    return { id: p.id, nome: p.nome, preco: precoAtual, imagem: p.imagem, quantidade: Math.max(1, novaQtd) };
+  }).filter(Boolean);
+
+  carrinho = carrinho.filter(item => {
+    const p = produtos.find(x => String(x.id) === String(item.id));
+    if (!p) return false;
+    const estoque = parseInt(p.estoque) || 0;
+    const status = p.status || 'ativo';
+    if (status === 'esgotado' || status === 'em_falta' || estoque <= 0) { alterou = true; return false; }
+    return true;
+  });
+
+  if (alterou) salvarCarrinhoNoStorage();
+
+  renderizarCategorias();
+  renderizarProdutos();
+  renderizarCarrinho();
+}
+
+
+
+function mostrarTelaManutencao(manut) {
+  const tela = document.getElementById('telaManutencao');
+  tela.style.display = 'flex';
+  document.getElementById('manutMsgCliente').textContent = manut.mensagem || 'Estamos em manutenção. Voltamos em breve! 🍇';
+  
+  // Esconde conteúdo normal
+  document.querySelector('.topbar').style.display = 'none';
+  document.querySelector('.hero').style.display = 'none';
+  document.querySelector('.container').style.display = 'none';
+  
+  // Timer regressivo
+  if (manutTimerInterval) clearInterval(manutTimerInterval);
+  const timerEl = document.getElementById('manutTimer');
+  
+  function atualizarTimer() {
+    const agora = Date.now();
+    const restante = Math.floor((manut.expiraEm - agora) / 1000);
+    
+    if (restante <= 0 && manut.expiraEm > 0) {
+      timerEl.textContent = '✅ Voltando ao ar...';
+      // Tenta recarregar
+      setTimeout(() => window.location.reload(), 2000);
+      return;
+    }
+    
+    if (manut.expiraEm === 0) {
+      timerEl.textContent = '⏱️ Sem previsão de retorno';
+      return;
+    }
+    
+    const min = Math.floor(restante / 60);
+    const seg = restante % 60;
+    timerEl.textContent = `⏱️ Volta em ${min}m ${seg}s`;
+  }
+  
+  atualizarTimer();
+  if (manut.expiraEm > 0) manutTimerInterval = setInterval(atualizarTimer, 1000);
+}
+
+// Verifica manutenção periodicamente (a cada 60s)
+setInterval(async () => {
+  const tela = document.getElementById('telaManutencao');
+  if (tela.style.display === 'flex') {
+    // Se está em manutenção, tenta ver se já saiu
+    const data = await chamarAPI('obterConfigPublica');
+    if (data.success && data.manutencao && !data.manutencao.ativa) {
+      window.location.reload();
+    }
+  }
+}, 60000);
+
 
     function formatarTelefone(tel) {
       const t = String(tel).replace(/\D/g, '');
@@ -492,7 +568,7 @@
         const estoque = parseInt(p.estoque) || 0;
         const inativo = status === 'esgotado' || status === 'em_falta' || status === 'oculto' || estoque <= 0;
         const imgHtml = p.imagem
-          ? `<img src="${p.imagem}" alt="${p.nome}" class="product-image" onerror="this.outerHTML='<div class=\\'product-image\\' style=\\'display:flex;align-items:center;justify-content:center;font-size:48px;\\'>🧃</div>'">`
+          ? `<img src="${p.imagem}" alt="${p.nome}" class="product-image" loading="lazy" decoding="async" onerror="this.outerHTML='<div class=\\'product-image\\' style=\\'display:flex;align-items:center;justify-content:center;font-size:48px;\\'>🧃</div>'">`
           : `<div class="product-image" style="display:flex;align-items:center;justify-content:center;font-size:48px;">🧃</div>`;
 
         let badgeHtml = '';
@@ -602,7 +678,7 @@
       body.classList.remove('empty'); footer.style.display = 'block';
       body.innerHTML = carrinho.map(item => `
     <div class="cart-item">
-      ${item.imagem ? `<img src="${item.imagem}" class="cart-item-img" onerror="this.style.display='none'">` : `<div class="cart-item-img" style="display:flex;align-items:center;justify-content:center;font-size:22px;">🧃</div>`}
+      ${item.imagem ? `<img src="${item.imagem}" class="cart-item-img" loading="lazy" decoding="async" onerror="this.style.display='none'">` : `<div class="cart-item-img" style="display:flex;align-items:center;justify-content:center;font-size:22px;">🧃</div>`}
       <div class="cart-item-info">
         <div class="cart-item-name">${item.nome}</div>
         <div class="cart-item-price">R$ ${item.preco.toFixed(2).replace('.', ',')} / un.</div>
